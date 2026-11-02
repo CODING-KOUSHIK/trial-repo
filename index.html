@@ -736,9 +736,9 @@
         }
         /* ── Report Preview Modal & Tabs ── */
         .report-modal{
-            max-width:720px !important;
+            max-width:820px !important;
             width:96%;
-            max-height:92vh;
+            max-height:94vh;
             overflow-y:auto;
         }
         .report-tabs{
@@ -782,12 +782,12 @@
         }
         
         .report-image-wrap{
-            background:#0b0c16;border:1px solid rgba(255,255,255,.1);border-radius:16px;
-            padding:16px 12px;margin-bottom:14px;text-align:center;max-height:58vh;overflow-y:auto;
+            background:#070810;border:1px solid rgba(255,255,255,.15);border-radius:18px;
+            padding:18px 14px;margin-bottom:14px;text-align:center;max-height:64vh;overflow-y:auto;
         }
         .report-image-wrap img{
-            max-width:100%;aspect-ratio:1/1;object-fit:contain;border-radius:12px;display:block;margin:0 auto;
-            box-shadow:0 8px 32px rgba(0,0,0,.65);border:1px solid rgba(255,255,255,0.12);
+            width:100%;max-width:680px;aspect-ratio:1/1;object-fit:contain;border-radius:14px;display:block;margin:0 auto;
+            box-shadow:0 12px 40px rgba(0,0,0,.75);border:1px solid rgba(255,255,255,0.18);
         }
         .report-image-placeholder{
             padding:45px 20px;color:var(--txt3);font-size:.92rem;font-weight:600;
@@ -1597,16 +1597,16 @@
             return day + ' ' + month + ' ' + year;
         }
 
-        /* ── CANVAS 2D REPORT CARD GENERATOR (1:1 SQUARE & HD QUALITY) ── */
+        /* ── CANVAS 2D REPORT CARD GENERATOR (1:1 SQUARE & ULTRA HD QUALITY) ── */
         function drawReportCanvas(data) {
             const { dateStr, subject, batch, absentList, notDoneList, doneList, presentCount, totalStudents, istTimestamp } = data;
 
-            // Strict 1:1 Aspect Ratio (Square: 1000px × 1000px)
-            const SIZE = 1000;
-            const pad = 24;
-            const contentW = SIZE - pad * 2; // 952px
+            // Strict 1:1 Aspect Ratio (Square: 1200px × 1200px)
+            const SIZE = 1200;
+            const pad = 28;
+            const contentW = SIZE - pad * 2; // 1144px
 
-            // High-Definition 2x Scale (Output: 2000px × 2000px HD PNG)
+            // High-Definition 2x Scale (Output: 2400px × 2400px Ultra HD PNG)
             const scale = 2;
             const canvas = document.createElement('canvas');
             canvas.width = SIZE * scale;
@@ -1624,18 +1624,18 @@
             let curY = pad;
 
             // ── 1. Top Header Card (White Card) ──
-            const headerH = 110;
+            const headerH = 124;
             ctx.fillStyle = '#ffffff';
-            drawRoundRect(ctx, pad, curY, contentW, headerH, 14);
+            drawRoundRect(ctx, pad, curY, contentW, headerH, 16);
             ctx.fill();
             ctx.strokeStyle = '#e2e8f0';
-            ctx.lineWidth = 1.2;
+            ctx.lineWidth = 1.5;
             ctx.stroke();
 
             // Circular PW Logo (Monogram)
-            const logoX = pad + 44;
+            const logoX = pad + 54;
             const logoY = curY + headerH / 2;
-            const logoRadius = 28;
+            const logoRadius = 34;
 
             ctx.save();
             ctx.fillStyle = '#000000';
@@ -1646,71 +1646,71 @@
             ctx.fillStyle = '#ffffff';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
+            ctx.font = 'bold 28px "Times New Roman", Georgia, serif';
+            ctx.fillText('P', logoX - 5, logoY - 9);
             ctx.font = 'bold 24px "Times New Roman", Georgia, serif';
-            ctx.fillText('P', logoX - 4, logoY - 8);
-            ctx.font = 'bold 20px "Times New Roman", Georgia, serif';
-            ctx.fillText('W', logoX + 5, logoY + 9);
+            ctx.fillText('W', logoX + 6, logoY + 11);
             ctx.restore();
 
             // Header Text Block
-            const textStartX = logoX + logoRadius + 20;
+            const textStartX = logoX + logoRadius + 24;
 
             // VIDYAPEETH
-            ctx.fillStyle = '#111827';
-            ctx.font = '900 30px Poppins, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+            ctx.fillStyle = '#0a0a0a';
+            ctx.font = '900 36px Poppins, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
             ctx.textAlign = 'left';
             ctx.textBaseline = 'top';
             ctx.fillText('VIDYAPEETH', textStartX, curY + 16);
 
             // IIT-JEE | NEET | FOUNDATION
-            const tagY = curY + 52;
-            ctx.font = '800 13px Inter, -apple-system, BlinkMacSystemFont, sans-serif';
+            const tagY = curY + 58;
+            ctx.font = '800 15px Inter, -apple-system, BlinkMacSystemFont, sans-serif';
             let currX = textStartX;
             ctx.fillStyle = '#e11d48';
             ctx.fillText('IIT-JEE', currX, tagY);
             currX += ctx.measureText('IIT-JEE').width;
 
             ctx.fillStyle = '#9ca3af';
-            ctx.fillText('  |  ', currX, tagY);
-            currX += ctx.measureText('  |  ').width;
+            ctx.fillText('   |   ', currX, tagY);
+            currX += ctx.measureText('   |   ').width;
 
             ctx.fillStyle = '#0f766e';
             ctx.fillText('NEET', currX, tagY);
             currX += ctx.measureText('NEET').width;
 
             ctx.fillStyle = '#9ca3af';
-            ctx.fillText('  |  ', currX, tagY);
-            currX += ctx.measureText('  |  ').width;
+            ctx.fillText('   |   ', currX, tagY);
+            currX += ctx.measureText('   |   ').width;
 
             ctx.fillStyle = '#e11d48';
             ctx.fillText('FOUNDATION', currX, tagY);
 
             // HOMEWORK & ATTENDANCE REPORT
-            const repY = curY + 74;
+            const repY = curY + 84;
             ctx.fillStyle = '#15345d';
-            ctx.font = '800 13px Inter, -apple-system, BlinkMacSystemFont, sans-serif';
+            ctx.font = '900 15px Inter, -apple-system, BlinkMacSystemFont, sans-serif';
             ctx.fillText('HOMEWORK & ATTENDANCE REPORT', textStartX, repY);
 
             curY += headerH + 14;
 
             // ── 2. Info Bar (Deep Navy) ──
-            const infoH = 48;
+            const infoH = 52;
             ctx.fillStyle = '#15345d';
-            drawRoundRect(ctx, pad, curY, contentW, infoH, 10);
+            drawRoundRect(ctx, pad, curY, contentW, infoH, 12);
             ctx.fill();
 
             ctx.fillStyle = '#ffffff';
-            ctx.font = '700 12.5px Inter, -apple-system, BlinkMacSystemFont, sans-serif';
+            ctx.font = '800 15px Inter, -apple-system, BlinkMacSystemFont, sans-serif';
             ctx.textAlign = 'left';
             ctx.textBaseline = 'middle';
             const infoMidY = curY + infoH / 2;
-            ctx.fillText('DATE: ' + (dateStr || '').toUpperCase() + '   |   BATCH: ' + (batch || '').toUpperCase() + '   |   SUBJECT: ' + (subject || '').toUpperCase(), pad + 20, infoMidY);
+            ctx.fillText('DATE: ' + (dateStr || '').toUpperCase() + '     |     BATCH: ' + (batch || '').toUpperCase() + '     |     SUBJECT: ' + (subject || '').toUpperCase(), pad + 24, infoMidY);
 
-            curY += infoH + 12;
+            curY += infoH + 14;
 
             // ── 3. Four Summary Stat Cards Row ──
-            const statsH = 76;
-            const gap = 12;
+            const statsH = 92;
+            const gap = 14;
             const cardW = (contentW - gap * 3) / 4;
 
             const summaryCards = [
@@ -1755,31 +1755,31 @@
             summaryCards.forEach((c, idx) => {
                 const cx = pad + idx * (cardW + gap);
                 ctx.fillStyle = c.bg;
-                drawRoundRect(ctx, cx, curY, cardW, statsH, 10);
+                drawRoundRect(ctx, cx, curY, cardW, statsH, 12);
                 ctx.fill();
 
                 ctx.fillStyle = c.text;
-                ctx.font = '800 10px Inter, sans-serif';
+                ctx.font = '900 12px Inter, sans-serif';
                 ctx.textAlign = 'left';
                 ctx.textBaseline = 'top';
-                ctx.fillText(c.title, cx + 12, curY + 10);
+                ctx.fillText(c.title, cx + 16, curY + 12);
 
                 ctx.fillStyle = c.countColor;
-                ctx.font = '800 23px Poppins, Inter, sans-serif';
-                ctx.fillText(c.count, cx + 12, curY + 26);
+                ctx.font = '900 34px Poppins, Inter, sans-serif';
+                ctx.fillText(c.count, cx + 16, curY + 30);
 
                 ctx.fillStyle = c.subColor;
-                ctx.font = '600 9px Inter, sans-serif';
-                ctx.fillText(c.sub, cx + 12, curY + 54);
+                ctx.font = '700 11.5px Inter, sans-serif';
+                ctx.fillText(c.sub, cx + 16, curY + 68);
             });
 
-            curY += statsH + 16;
+            curY += statsH + 18;
 
             // ── 4. Dynamic Body Space: Space-Filling Adaptive Layout ──
-            const footerH = 44;
+            const footerH = 50;
             const footerY = SIZE - pad - footerH;
             const bodyY = curY;
-            const bodyH = footerY - 16 - bodyY; // Available height for student list sections
+            const bodyH = footerY - 18 - bodyY; // Available height for student list sections
             const bodyW = contentW;
             const bodyX = pad;
 
@@ -1789,59 +1789,73 @@
             if (absentList.length > 0)   activeCats.push('absent');
             if (doneList.length > 0)     activeCats.push('done');
 
-            // Category card rendering helper (names only, no reg_no, auto-flowing columns)
+            // Category card rendering helper with BIG, BOLD auto-fitting typography
             function renderCategoryCard(box, cfg) {
                 const { title, icon, students, headerBg, borderColor, bodyBg, footerNote, noteColor } = cfg;
-                const { x, y, w, h, cols } = box;
-                const headerH = 38;
+                const { x, y, w, h } = box;
+                const headerH = 46;
 
                 // Card Header
                 ctx.fillStyle = headerBg;
-                drawRoundRect(ctx, x, y, w, headerH, [10, 10, 0, 0]);
+                drawRoundRect(ctx, x, y, w, headerH, [12, 12, 0, 0]);
                 ctx.fill();
 
                 ctx.fillStyle = '#ffffff';
-                ctx.font = '800 13px Inter, sans-serif';
+                ctx.font = '900 16px Inter, sans-serif';
                 ctx.textAlign = 'left';
                 ctx.textBaseline = 'middle';
-                ctx.fillText(icon + '  ' + title + ' (' + students.length + ')', x + 16, y + headerH / 2);
+                ctx.fillText(icon + '   ' + title + ' (' + students.length + ')', x + 20, y + headerH / 2);
 
                 // Card Body
                 const bodyCardH = h - headerH;
                 ctx.fillStyle = bodyBg || '#ffffff';
-                drawRoundRect(ctx, x, y + headerH, w, bodyCardH, [0, 0, 10, 10]);
+                drawRoundRect(ctx, x, y + headerH, w, bodyCardH, [0, 0, 12, 12]);
                 ctx.fill();
                 ctx.strokeStyle = borderColor || '#e2e8f0';
-                ctx.lineWidth = 1.5;
+                ctx.lineWidth = 1.8;
                 ctx.stroke();
 
                 // Compute student names layout
                 const hasNote = Boolean(footerNote);
-                const noteH = hasNote ? 32 : 0;
-                const availTop = y + headerH + 12;
-                const availH = bodyCardH - noteH - 24;
-                const availW = w - 32;
+                const noteH = hasNote ? 36 : 0;
+                const availTop = y + headerH + 14;
+                const availBottom = y + h - (hasNote ? 36 : 14);
+                const availH = availBottom - availTop;
+                const availW = w - 36;
 
-                const colCount = Math.max(1, cols || 1);
-                const rowsPerCol = Math.ceil(students.length / colCount);
-                const rowH = Math.max(18, Math.min(27, Math.floor(availH / rowsPerCol)));
-                const fontSize = Math.max(10.5, Math.min(13.5, Math.floor(rowH * 0.58)));
-                const colWidth = availW / colCount;
+                // Dynamic column selection based on width and student count
+                let cols = 1;
+                if (w > 700) {
+                    if (students.length <= 6) cols = 2;
+                    else if (students.length <= 16) cols = 3;
+                    else cols = 4;
+                } else {
+                    if (students.length <= 8) cols = 1;
+                    else if (students.length <= 22) cols = 2;
+                    else cols = 3;
+                }
 
-                ctx.font = '700 ' + fontSize + 'px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+                const rowsPerCol = Math.max(1, Math.ceil(students.length / cols));
+                const availRowH = Math.floor(availH / rowsPerCol);
+
+                // Big prominent font size: dynamically scales between 14px and 22px!
+                const rowH = Math.min(48, Math.max(26, availRowH));
+                const fontSize = Math.min(22, Math.max(14, Math.floor(rowH * 0.52)));
+                const colWidth = availW / cols;
+
+                ctx.font = '800 ' + fontSize + 'px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
                 ctx.textAlign = 'left';
                 ctx.textBaseline = 'middle';
-                ctx.fillStyle = '#1f2937';
+                ctx.fillStyle = '#0f172a'; // Deep bold slate black for high legibility
 
                 students.forEach((s, i) => {
                     const cIdx = Math.floor(i / rowsPerCol);
                     const rIdx = i % rowsPerCol;
-                    const itemX = x + 16 + cIdx * colWidth;
+                    const itemX = x + 18 + cIdx * colWidth;
                     const itemY = availTop + rIdx * rowH + (rowH / 2);
 
                     let displayName = (i + 1) + '. ' + s.name.toUpperCase();
-                    // Measure and truncate if too long for column
-                    while (ctx.measureText(displayName).width > (colWidth - 12) && displayName.length > 6) {
+                    while (ctx.measureText(displayName).width > (colWidth - 14) && displayName.length > 5) {
                         displayName = displayName.slice(0, -2) + '…';
                     }
                     ctx.fillText(displayName, itemX, itemY);
@@ -1850,10 +1864,10 @@
                 // Optional Footer Note inside card
                 if (hasNote) {
                     ctx.fillStyle = noteColor || '#b91c1c';
-                    ctx.font = '800 11px Inter, sans-serif';
+                    ctx.font = '800 13px Inter, sans-serif';
                     ctx.textAlign = 'left';
                     ctx.textBaseline = 'middle';
-                    ctx.fillText(footerNote, x + 16, y + h - 16);
+                    ctx.fillText(footerNote, x + 20, y + h - 18);
                 }
             }
 
@@ -1891,45 +1905,45 @@
                 }
             };
 
-            const boxGap = 14;
+            const boxGap = 16;
 
             if (activeCats.length === 3) {
                 // All 3 active
                 if (notDoneList.length <= 6) {
                     // Top full-width banner for HW Not Submitted, bottom 2 equal columns
-                    const topH = 138;
+                    const topH = 175;
                     const btmH = bodyH - topH - boxGap;
                     const colW = Math.floor((bodyW - boxGap) / 2);
 
                     renderCategoryCard(
-                        { x: bodyX, y: bodyY, w: bodyW, h: topH, cols: notDoneList.length > 3 ? 2 : 1 },
+                        { x: bodyX, y: bodyY, w: bodyW, h: topH },
                         categoryConfigs.notDone
                     );
                     renderCategoryCard(
-                        { x: bodyX, y: bodyY + topH + boxGap, w: colW, h: btmH, cols: absentList.length > 10 ? 2 : 1 },
+                        { x: bodyX, y: bodyY + topH + boxGap, w: colW, h: btmH },
                         categoryConfigs.absent
                     );
                     renderCategoryCard(
-                        { x: bodyX + colW + boxGap, y: bodyY + topH + boxGap, w: colW, h: btmH, cols: doneList.length > 10 ? 2 : 1 },
+                        { x: bodyX + colW + boxGap, y: bodyY + topH + boxGap, w: colW, h: btmH },
                         categoryConfigs.done
                     );
                 } else {
                     // Left column = HW Not Submitted (full height), Right column = Absent (top) + Submitted (bottom)
                     const colW = Math.floor((bodyW - boxGap) / 2);
                     const prop = absentList.length / (absentList.length + doneList.length);
-                    const absentH = Math.max(160, Math.min(bodyH - 160, Math.round((bodyH - boxGap) * prop)));
+                    const absentH = Math.max(180, Math.min(bodyH - 180, Math.round((bodyH - boxGap) * prop)));
                     const doneH = bodyH - absentH - boxGap;
 
                     renderCategoryCard(
-                        { x: bodyX, y: bodyY, w: colW, h: bodyH, cols: notDoneList.length > 12 ? 2 : 1 },
+                        { x: bodyX, y: bodyY, w: colW, h: bodyH },
                         categoryConfigs.notDone
                     );
                     renderCategoryCard(
-                        { x: bodyX + colW + boxGap, y: bodyY, w: colW, h: absentH, cols: absentList.length > 8 ? 2 : 1 },
+                        { x: bodyX + colW + boxGap, y: bodyY, w: colW, h: absentH },
                         categoryConfigs.absent
                     );
                     renderCategoryCard(
-                        { x: bodyX + colW + boxGap, y: bodyY + absentH + boxGap, w: colW, h: doneH, cols: doneList.length > 8 ? 2 : 1 },
+                        { x: bodyX + colW + boxGap, y: bodyY + absentH + boxGap, w: colW, h: doneH },
                         categoryConfigs.done
                     );
                 }
@@ -1937,57 +1951,52 @@
                 // Exactly 2 categories active -> 50% left & 50% right columns, full height!
                 const colW = Math.floor((bodyW - boxGap) / 2);
                 const [c1, c2] = activeCats;
-                const cfg1 = categoryConfigs[c1];
-                const cfg2 = categoryConfigs[c2];
 
                 renderCategoryCard(
-                    { x: bodyX, y: bodyY, w: colW, h: bodyH, cols: cfg1.students.length > 10 ? 2 : 1 },
-                    cfg1
+                    { x: bodyX, y: bodyY, w: colW, h: bodyH },
+                    categoryConfigs[c1]
                 );
                 renderCategoryCard(
-                    { x: bodyX + colW + boxGap, y: bodyY, w: colW, h: bodyH, cols: cfg2.students.length > 10 ? 2 : 1 },
-                    cfg2
+                    { x: bodyX + colW + boxGap, y: bodyY, w: colW, h: bodyH },
+                    categoryConfigs[c2]
                 );
             } else if (activeCats.length === 1) {
                 // Exactly 1 category active -> Full width & height!
                 const c1 = activeCats[0];
-                const cfg = categoryConfigs[c1];
-                const cols = cfg.students.length > 20 ? 3 : 2;
-
                 renderCategoryCard(
-                    { x: bodyX, y: bodyY, w: bodyW, h: bodyH, cols },
-                    cfg
+                    { x: bodyX, y: bodyY, w: bodyW, h: bodyH },
+                    categoryConfigs[c1]
                 );
             } else {
                 // 0 categories active: Celebration card
                 ctx.fillStyle = '#ffffff';
-                drawRoundRect(ctx, bodyX, bodyY, bodyW, bodyH, 12);
+                drawRoundRect(ctx, bodyX, bodyY, bodyW, bodyH, 16);
                 ctx.fill();
                 ctx.strokeStyle = '#10b981';
-                ctx.lineWidth = 2;
+                ctx.lineWidth = 2.5;
                 ctx.stroke();
 
                 ctx.fillStyle = '#10b981';
-                ctx.font = '800 24px Poppins, sans-serif';
+                ctx.font = '900 28px Poppins, sans-serif';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText('🎉 ALL HOMEWORK COMPLETED & 100% ATTENDANCE TODAY!', bodyX + bodyW / 2, bodyY + bodyH / 2 - 16);
+                ctx.fillText('🎉 ALL HOMEWORK COMPLETED & 100% ATTENDANCE TODAY!', bodyX + bodyW / 2, bodyY + bodyH / 2 - 18);
 
                 ctx.fillStyle = '#64748b';
-                ctx.font = '600 14px Inter, sans-serif';
-                ctx.fillText('All students have attended and submitted their homework on time.', bodyX + bodyW / 2, bodyY + bodyH / 2 + 20);
+                ctx.font = '700 16px Inter, sans-serif';
+                ctx.fillText('All students have attended and submitted their homework on time.', bodyX + bodyW / 2, bodyY + bodyH / 2 + 24);
             }
 
             // ── 5. Footer (Bottom-aligned in 1:1 square) ──
             ctx.textAlign = 'center';
             ctx.textBaseline = 'top';
             ctx.fillStyle = '#15345d';
-            ctx.font = '800 12px Inter, sans-serif';
+            ctx.font = '900 14px Inter, sans-serif';
             ctx.fillText('Regular attendance  •  Timely homework  •  Daily revision', SIZE / 2, footerY + 6);
 
             ctx.fillStyle = '#64748b';
-            ctx.font = '500 10.5px Inter, sans-serif';
-            ctx.fillText('PW ALIPURDUAR VIDYAPEETH  |  Generated: ' + istTimestamp, SIZE / 2, footerY + 24);
+            ctx.font = '700 12px Inter, sans-serif';
+            ctx.fillText('PW ALIPURDUAR VIDYAPEETH  |  Generated: ' + istTimestamp, SIZE / 2, footerY + 28);
 
             return canvas;
         }
