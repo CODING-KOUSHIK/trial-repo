@@ -1,0 +1,2176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PW Alipurduar Vidyapeeth | Student Tracker</title>
+    <meta name="description" content="Homework Tracker for PW Alipurduar Vidyapeeth teachers">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary:         #FF6B35;
+            --primary-dim:     rgba(255,107,53,0.16);
+            --secondary:       #FFB347;
+            --bg:              #080912;
+            --bg-card:         rgba(255,255,255,0.045);
+            --bg-card-h:       rgba(255,255,255,0.08);
+            --border:          rgba(255,255,255,0.11);
+            --border-h:        rgba(255,255,255,0.24);
+            --txt1:            #F3F5FC;
+            --txt2:            #9CA3AF;
+            --txt3:            #6B7280;
+            --success:         #10B981;
+            --success-dim:     rgba(16,185,129,0.16);
+            --warn:            #F59E0B;
+            --warn-dim:        rgba(245,158,11,0.16);
+
+            /* Professional High-Visibility Selection Colors (NO RED) */
+            /* Not Done = High-Contrast Sunburst Amber */
+            --notdone:         #F59E0B;
+            --notdone-bright:  #FBBF24;
+            --notdone-bg:      rgba(245,158,11,0.22);
+            --notdone-glow:    rgba(245,158,11,0.45);
+
+            /* Absent = Electric Neon Violet / Indigo */
+            --absent:          #8B5CF6;
+            --absent-bright:   #A78BFA;
+            --absent-bg:       rgba(139,92,246,0.24);
+            --absent-glow:     rgba(139,92,246,0.45);
+
+            --grad:            linear-gradient(135deg,#FF6B35,#FFB347);
+        }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+        html{scroll-behavior:smooth}
+        body{
+            font-family:'Inter',sans-serif;
+            background:var(--bg);
+            color:var(--txt1);
+            min-height:100vh;
+            overflow-x:hidden;
+            -webkit-tap-highlight-color:transparent;
+        }
+        button{cursor:pointer;font-family:'Inter',sans-serif}
+        input,select{font-family:'Inter',sans-serif}
+        ::-webkit-scrollbar{width:6px;height:6px}
+        ::-webkit-scrollbar-track{background:transparent}
+        ::-webkit-scrollbar-thumb{background:rgba(255,107,53,.35);border-radius:4px}
+
+        /* ── Ambient Glows ── */
+        .glow{position:fixed;border-radius:50%;filter:blur(95px);pointer-events:none;z-index:0;opacity:.45}
+        .glow-1{width:560px;height:560px;background:rgba(255,107,53,.12);top:-180px;right:-120px}
+        .glow-2{width:420px;height:420px;background:rgba(255,179,71,.08);bottom:100px;left:-100px}
+
+        /* ── Birthday Top Banner ── */
+        #bday-banner{
+            display:none;position:relative;overflow:hidden;
+            background:linear-gradient(90deg,#7c3aed,#FF6B35,#FFB347,#ec4899,#7c3aed);
+            background-size:300% 100%;animation:bdayGrad 4s linear infinite;
+            padding:10px 16px;text-align:center;font-weight:700;font-size:.92rem;
+            color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.4);z-index:200;
+            cursor:pointer;
+        }
+        @keyframes bdayGrad{0%{background-position:0% 50%}100%{background-position:300% 50%}}
+        #bday-banner::after{
+            content:'';position:absolute;inset:0;
+            background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);
+            animation:shimmer 2.5s linear infinite;
+        }
+        @keyframes shimmer{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+        .bday-inner{display:flex;align-items:center;justify-content:center;gap:10px;position:relative;z-index:1}
+
+        /* ── Header ── */
+        header{
+            position:sticky;top:0;z-index:100;
+            background:rgba(8,9,18,.92);backdrop-filter:blur(24px);
+            border-bottom:1px solid var(--border);
+        }
+        .header-inner{
+            max-width:1280px;margin:0 auto;padding:12px 20px;
+            display:flex;align-items:center;justify-content:space-between;gap:12px;
+        }
+        .logo-wrap{display:flex;align-items:center;gap:14px}
+        .logo-box{
+            width:52px;height:52px;flex-shrink:0;border-radius:12px;overflow:hidden;
+            background:#ffffff;display:flex;align-items:center;justify-content:center;
+            border:2px solid rgba(255,107,53,.6);
+            box-shadow:0 0 18px rgba(255,107,53,.3);
+        }
+        .logo-box img{width:100%;height:100%;object-fit:contain;padding:3px}
+        .logo-txt{font-family:'Poppins',sans-serif;font-size:1.25rem;font-weight:900;color:var(--primary)}
+        
+        /* Requirement: PW Alipurduar Vidyapeeth in pure white */
+        .school-name{
+            font-family:'Poppins',sans-serif;
+            font-size:1.2rem;
+            font-weight:800;
+            line-height:1.2;
+            color:#ffffff !important;
+            -webkit-text-fill-color:#ffffff !important;
+            background:none !important;
+            letter-spacing:.2px;
+            text-shadow:0 2px 10px rgba(0,0,0,0.5);
+        }
+        .school-sub{font-size:.74rem;color:var(--txt2);font-weight:500;margin-top:2px}
+        .header-actions{display:flex;align-items:center;gap:8px}
+        .bday-pill-btn{
+            display:none;align-items:center;gap:6px;padding:7px 14px;
+            background:linear-gradient(135deg,rgba(124,58,237,.3),rgba(236,72,153,.3));
+            border:1.5px solid rgba(236,72,153,.5);color:#ffd6e7;border-radius:20px;
+            font-size:.8rem;font-weight:700;transition:all .2s;
+            box-shadow:0 2px 12px rgba(236,72,153,.25);
+        }
+        .bday-pill-btn:hover{transform:scale(1.04);background:linear-gradient(135deg,rgba(124,58,237,.45),rgba(236,72,153,.45))}
+
+        /* ── Main Layout ── */
+        main{max-width:1280px;margin:0 auto;padding:28px 20px 145px;position:relative;z-index:1}
+
+        /* ── Card ── */
+        .card{
+            background:var(--bg-card);border:1px solid var(--border);border-radius:22px;
+            padding:32px;position:relative;overflow:hidden;backdrop-filter:blur(14px);
+            box-shadow:0 12px 40px rgba(0,0,0,.45);
+        }
+        .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad)}
+        .card-head{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+        .card-icon{
+            width:42px;height:42px;border-radius:12px;background:var(--grad);
+            display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex-shrink:0;
+        }
+        .card-title{font-family:'Poppins',sans-serif;font-size:1.2rem;font-weight:700;color:#fff}
+
+        /* ── Form Controls ── */
+        .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-bottom:24px}
+        .fg{display:flex;flex-direction:column;gap:7px}
+        .fg label{font-size:.78rem;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.6px}
+        .ctrl{
+            background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:12px;
+            padding:13px 15px;color:var(--txt1);font-size:.95rem;font-weight:500;
+            outline:none;transition:all .25s;width:100%;
+        }
+        .ctrl:focus{border-color:var(--primary);background:rgba(255,107,53,.08);box-shadow:0 0 0 3px rgba(255,107,53,.15)}
+        select.ctrl option{background:#111222;color:var(--txt1);padding:8px}
+
+        /* ── Primary Button ── */
+        .btn-primary{
+            width:100%;padding:15px;background:var(--grad);border:none;border-radius:14px;
+            color:#fff;font-size:1.02rem;font-weight:700;
+            display:flex;align-items:center;justify-content:center;gap:10px;
+            transition:all .3s;position:relative;overflow:hidden;
+            box-shadow:0 6px 20px rgba(255,107,53,.3);
+        }
+        .btn-primary::after{content:'';position:absolute;inset:0;background:rgba(255,255,255,0);transition:.3s}
+        .btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 26px rgba(255,107,53,.45)}
+        .btn-primary:active{transform:scale(.98)}
+
+        /* ── Loading / Error ── */
+        #loading-wrap{display:none;flex-direction:column;align-items:center;justify-content:center;padding:70px 20px;gap:16px}
+        .spinner{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .75s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        #loading-wrap p{color:var(--txt2);font-size:.92rem}
+        #error-wrap{display:none;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,.35);border-radius:16px;padding:28px;text-align:center;color:#FBBF24}
+
+        /* ── Students Section Header & Controls ── */
+        .sec-header{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:20px}
+        .sec-title{font-family:'Poppins',sans-serif;font-size:1.25rem;font-weight:800;color:#fff}
+        .badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+        .badge{padding:6px 14px;border-radius:20px;font-size:.78rem;font-weight:700}
+        .badge-o{background:var(--primary-dim);color:var(--primary);border:1px solid rgba(255,107,53,.35)}
+        .badge-g{background:var(--success-dim);color:var(--success);border:1px solid rgba(16,185,129,.35)}
+        .badge-y{background:rgba(245,158,11,.14);color:var(--warn);border:1px solid rgba(245,158,11,.35)}
+        
+        .sec-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+        .btn-back{
+            padding:10px 18px;border-radius:12px;border:1px solid var(--border);
+            background:var(--bg-card);color:var(--txt1);font-size:.88rem;font-weight:700;
+            display:flex;align-items:center;gap:6px;transition:all .2s;
+        }
+        .btn-back:hover{background:var(--bg-card-h);border-color:var(--border-h);color:#fff}
+
+        /* Guide / Help Toggle Button */
+        .btn-help{
+            padding:10px 16px;border-radius:12px;border:1px solid var(--border);
+            background:var(--bg-card);color:var(--txt1);font-size:.88rem;font-weight:700;
+            display:flex;align-items:center;gap:6px;transition:all .2s;
+        }
+        .btn-help:hover{background:var(--bg-card-h);border-color:var(--border-h);color:#fff}
+        .btn-help.active{
+            background:rgba(255,107,53,0.18);border-color:var(--primary);color:var(--secondary);
+        }
+
+        /* ── Collapsible Tap Guide Panel (Hidden by Default) ── */
+        .hint{
+            border-radius:14px;padding:14px 18px;margin-bottom:18px;font-size:.86rem;line-height:1.6;
+            animation:fadeIn .25s ease-out;
+        }
+        @keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+        .hint-hw{background:rgba(255,107,53,.07);border:1px solid rgba(255,107,53,.22);color:#FFB347}
+        .legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px}
+        .leg-item{display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:700;color:var(--txt1)}
+        .leg-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+
+        /* ── Bulk Actions Row (NO RED) ── */
+        .bulk-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+        .sm-btn{
+            padding:9px 18px;border-radius:10px;border:1.5px solid var(--border);
+            background:var(--bg-card);color:var(--txt1);font-size:.85rem;font-weight:700;
+            transition:all .2s;
+        }
+        .sm-btn:hover{background:var(--bg-card-h);border-color:var(--border-h)}
+        .sm-btn.amber-btn:hover{
+            border-color:var(--notdone-bright);color:#FDE68A;background:rgba(245,158,11,0.18);
+        }
+        .sm-btn.green-btn:hover{
+            border-color:var(--success);color:#A7F3D0;background:rgba(16,185,129,0.18);
+        }
+
+        /* ── Student Grid (Optimized for Smart Boards and Phones) ── */
+        .stu-grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));
+            gap:16px;
+            margin-bottom:30px;
+        }
+
+        /* ── Student Card (Box Frame & Maximized Elements) ── */
+        .stu-card{
+            background:rgba(255,255,255,0.04);
+            border:2.5px solid var(--border);
+            border-radius:18px;
+            padding:12px;
+            cursor:pointer;
+            transition:all .22s cubic-bezier(.4,0,.2,1);
+            position:relative;
+            overflow:hidden;
+            display:flex;
+            flex-direction:column;
+            user-select:none;
+            backdrop-filter:blur(8px);
+        }
+        .stu-card:hover{
+            transform:translateY(-3px);
+            border-color:rgba(255,107,53,.45);
+            background:rgba(255,255,255,0.07);
+            box-shadow:0 8px 24px rgba(0,0,0,.35);
+        }
+        .stu-card:active{transform:scale(.97)}
+
+        /* Box Frame for Student Photo - Maximized inside the box */
+        .stu-box-frame{
+            width:100%;
+            aspect-ratio:1 / 1;
+            border-radius:13px;
+            overflow:hidden;
+            background:#0d0e1a;
+            border:2px solid var(--border);
+            position:relative;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            flex-shrink:0;
+            transition:border-color .25s, transform .25s;
+        }
+        .stu-box-frame img{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            display:block;
+            transition:transform .3s;
+        }
+        .stu-card:hover .stu-box-frame img{
+            transform:scale(1.03);
+        }
+
+        /* Random Char Avatar (When Photo Not Available) - Full Box Fit */
+        .stu-char-avatar{
+            width:100%;
+            height:100%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-family:'Poppins',sans-serif;
+            font-size:3.2rem;
+            font-weight:900;
+            color:#ffffff;
+            text-shadow:0 3px 12px rgba(0,0,0,.45);
+        }
+
+        /* Card Content - Maximized Name */
+        .stu-info{
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            text-align:center;
+            padding:10px 4px 4px;
+            flex-grow:1;
+        }
+        .stu-name{
+            font-family:'Poppins',sans-serif;
+            font-weight:800;
+            font-size:1.06rem;
+            line-height:1.25;
+            color:#ffffff;
+            letter-spacing:.2px;
+            word-break:break-word;
+            display:-webkit-box;
+            -webkit-line-clamp:2;
+            -webkit-box-orient:vertical;
+            overflow:hidden;
+            text-shadow:0 1px 3px rgba(0,0,0,0.6);
+        }
+        .stu-reg{
+            font-size:.76rem;
+            color:var(--txt2);
+            font-weight:600;
+            margin-top:4px;
+        }
+        .stu-status-badge{
+            font-size:.74rem;
+            font-weight:900;
+            text-transform:uppercase;
+            letter-spacing:.6px;
+            margin-top:6px;
+            padding:4px 12px;
+            border-radius:14px;
+            display:inline-block;
+            transition:all .2s;
+            opacity:0;
+            visibility:hidden;
+        }
+        .stu-bday-tag{
+            font-size:.73rem;
+            color:#FBBF24;
+            font-weight:700;
+            margin-top:4px;
+            display:flex;
+            align-items:center;
+            gap:4px;
+            animation:bounceBday 2s infinite ease-in-out;
+        }
+        @keyframes bounceBday{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+
+        /* ── SELECTION STATES (HIGH VISIBILITY & NO RED) ── */
+        
+        /* 1. NOT DONE: Single Tap -> High-Contrast Sunburst Amber Glow & Banner */
+        .stu-card.not-done{
+            border:3.5px solid var(--notdone-bright) !important;
+            background:linear-gradient(180deg, rgba(245,158,11,0.28) 0%, rgba(26,18,6,0.92) 100%) !important;
+            box-shadow:0 0 26px var(--notdone-glow), inset 0 0 14px rgba(245,158,11,0.2) !important;
+            transform:translateY(-2px);
+        }
+        .stu-card.not-done .stu-box-frame{
+            border:2.5px solid var(--notdone-bright) !important;
+        }
+        .stu-card.not-done .state-icon{
+            opacity:1;
+            transform:scale(1);
+            background:var(--notdone-bright);
+            color:#000000;
+            font-weight:900;
+            box-shadow:0 3px 12px rgba(245,158,11,0.7);
+        }
+        .stu-card.not-done .stu-status-badge{
+            opacity:1;
+            visibility:visible;
+            background:var(--notdone-bright);
+            color:#000000;
+            font-weight:900;
+            box-shadow:0 2px 10px rgba(245,158,11,0.6);
+        }
+
+        /* 2. ABSENT: Double Tap -> High-Contrast Royal Violet Glow & Banner */
+        .stu-card.absent{
+            border:3.5px solid var(--absent-bright) !important;
+            background:linear-gradient(180deg, rgba(139,92,246,0.32) 0%, rgba(20,12,38,0.92) 100%) !important;
+            box-shadow:0 0 26px var(--absent-glow), inset 0 0 14px rgba(139,92,246,0.2) !important;
+            transform:translateY(-2px);
+        }
+        .stu-card.absent .stu-box-frame{
+            border:2.5px solid var(--absent-bright) !important;
+        }
+        .stu-card.absent .state-icon{
+            opacity:1;
+            transform:scale(1);
+            background:var(--absent-bright);
+            color:#ffffff;
+            font-weight:900;
+            box-shadow:0 3px 12px rgba(139,92,246,0.7);
+        }
+        .stu-card.absent .stu-status-badge{
+            opacity:1;
+            visibility:visible;
+            background:var(--absent-bright);
+            color:#ffffff;
+            font-weight:900;
+            box-shadow:0 2px 10px rgba(139,92,246,0.6);
+        }
+
+        /* Floating Corner State Icon */
+        .state-icon{
+            position:absolute;top:10px;right:10px;
+            width:34px;height:34px;border-radius:50%;
+            display:flex;align-items:center;justify-content:center;
+            font-size:.95rem;opacity:0;transform:scale(0);
+            box-shadow:0 3px 12px rgba(0,0,0,.6);
+            transition:all .28s cubic-bezier(.34,1.56,.64,1);
+            z-index:3;
+        }
+
+        /* Ripple Effect */
+        @keyframes ripple{0%{transform:translate(-50%,-50%) scale(0);opacity:.6}100%{transform:translate(-50%,-50%) scale(3.2);opacity:0}}
+        .ripple-el{
+            position:absolute;border-radius:50%;width:70px;height:70px;
+            left:50%;top:50%;transform:translate(-50%,-50%) scale(0);
+            animation:ripple .55s linear forwards;pointer-events:none;z-index:4;
+        }
+
+        /* ── Fixed Footer Bar ── */
+        .footer-bar{
+            position:fixed;bottom:0;left:0;right:0;z-index:150;
+            background:rgba(8,9,18,.95);backdrop-filter:blur(28px);
+            border-top:1px solid var(--border);padding:14px 24px;
+            box-shadow:0 -10px 30px rgba(0,0,0,.55);
+        }
+        .footer-inner{
+            max-width:1280px;margin:0 auto;display:flex;align-items:center;
+            justify-content:space-between;flex-wrap:wrap;gap:12px;
+        }
+        .stats-row{display:flex;gap:20px;flex-wrap:wrap;align-items:center}
+        .stat-item{display:flex;align-items:center;gap:8px;font-size:.92rem}
+        .stat-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+        .btn-cs{
+            padding:13px 26px;border-radius:12px;background:var(--grad);border:none;
+            color:#fff;font-size:.96rem;font-weight:700;
+            display:flex;align-items:center;gap:9px;transition:all .3s;
+            box-shadow:0 4px 16px rgba(255,107,53,.35);
+        }
+        .btn-cs:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,107,53,.5)}
+
+        /* ── Modals / Overlays ── */
+        .overlay{
+            position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.86);
+            backdrop-filter:blur(14px);display:none;align-items:center;
+            justify-content:center;padding:16px;
+        }
+        .overlay.open{display:flex}
+        .modal{
+            background:#111222;border:1px solid var(--border);border-radius:24px;
+            padding:30px;max-width:620px;width:100%;max-height:90vh;overflow-y:auto;
+            animation:modIn .36s cubic-bezier(.34,1.56,.64,1);
+            position:relative;
+            box-shadow:0 20px 60px rgba(0,0,0,.7);
+        }
+        @keyframes modIn{from{transform:scale(.92) translateY(18px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+        .mod-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+        .mod-title{font-family:'Poppins',sans-serif;font-size:1.15rem;font-weight:700;color:#fff}
+        .mod-close{
+            width:36px;height:36px;border-radius:10px;border:1px solid var(--border);
+            background:transparent;color:var(--txt2);font-size:1.1rem;
+            display:flex;align-items:center;justify-content:center;transition:all .2s;
+        }
+        .mod-close:hover{background:rgba(255,255,255,.1);color:#fff;border-color:var(--border-h)}
+        .msg-box{
+            background:#171829;border:1px solid rgba(255,255,255,.07);border-radius:14px;
+            padding:18px;font-size:.875rem;line-height:1.85;white-space:pre-wrap;
+            color:#dde1f0;margin-bottom:20px;max-height:380px;overflow-y:auto;
+        }
+        .mod-actions{display:flex;gap:12px}
+        .btn-outline{
+            flex:1;padding:13px;border-radius:12px;border:1px solid var(--primary);
+            background:var(--primary-dim);color:var(--primary);font-size:.9rem;font-weight:700;
+            transition:all .2s;
+        }
+        .btn-outline:hover{background:rgba(255,107,53,.26)}
+        .btn-fill{
+            flex:1;padding:13px;border-radius:12px;border:none;background:var(--grad);
+            color:#fff;font-size:.9rem;font-weight:700;transition:all .2s;
+        }
+        .btn-fill:hover{opacity:.93;transform:translateY(-1px)}
+
+        /* ── Back Warning Modal (NO RED) ── */
+        .warn-modal{max-width:440px;text-align:center;padding:34px 28px}
+        .warn-icon{
+            width:64px;height:64px;border-radius:50%;background:rgba(245,158,11,.16);
+            border:2px solid rgba(245,158,11,.4);color:#FBBF24;font-size:2rem;
+            display:flex;align-items:center;justify-content:center;margin:0 auto 16px;
+        }
+        .warn-title{font-family:'Poppins',sans-serif;font-size:1.2rem;font-weight:800;color:#fff;margin-bottom:8px}
+        .warn-desc{font-size:.88rem;color:var(--txt2);line-height:1.6;margin-bottom:24px}
+        .warn-actions{display:flex;gap:12px}
+        .btn-secondary{
+            flex:1;padding:12px;border-radius:11px;border:1px solid var(--border);
+            background:rgba(255,255,255,.06);color:var(--txt1);font-weight:700;font-size:.9rem;
+            transition:all .2s;
+        }
+        .btn-secondary:hover{background:rgba(255,255,255,.1)}
+        .btn-amber{
+            flex:1;padding:12px;border-radius:11px;border:none;background:#D97706;
+            color:#ffffff;font-weight:800;font-size:.9rem;transition:all .2s;
+            box-shadow:0 4px 15px rgba(217,119,6,0.35);
+        }
+        .btn-amber:hover{background:#B45309}
+
+        /* ── ALL BIRTHDAY STUDENTS IN SAME SCREEN (AUTO-ADJUSTING) ── */
+        .bday-modal-wrap{
+            max-width:540px;
+            width:94%;
+            background:linear-gradient(180deg,#16142a,#0f0f1b);
+            border:2px solid rgba(255,179,71,.45);
+            box-shadow:0 0 50px rgba(124,58,237,.35), 0 0 100px rgba(255,107,53,.25);
+            text-align:center;
+            padding:32px 24px 24px;
+            overflow:hidden;
+            position:relative;
+            transition:max-width .3s ease;
+        }
+        #bday-canvas{
+            position:absolute;inset:0;pointer-events:none;z-index:0;
+        }
+        .bday-modal-content{position:relative;z-index:1}
+        .bday-badge-top{
+            display:inline-flex;align-items:center;gap:6px;padding:6px 16px;
+            border-radius:20px;background:linear-gradient(90deg,#7c3aed,#ec4899);
+            font-size:.82rem;font-weight:800;color:#fff;margin-bottom:12px;
+            letter-spacing:.5px;box-shadow:0 4px 15px rgba(236,72,153,.35);
+        }
+        .bday-title{
+            font-family:'Poppins',sans-serif;font-size:1.6rem;font-weight:900;
+            background:linear-gradient(135deg,#FFB347,#FF6B35,#ec4899);
+            -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+            margin-bottom:6px;line-height:1.2;
+        }
+        .bday-subtitle{
+            font-size:.88rem;color:#FDE68A;font-weight:600;margin-bottom:18px;
+        }
+
+        /* Auto-adjusting Responsive Grid for Birthday Students on Same Screen */
+        .bday-students-grid{
+            display:grid;
+            gap:16px;
+            margin:0 auto 20px;
+            width:100%;
+            justify-content:center;
+            align-items:stretch;
+        }
+
+        /* 1 Student */
+        .bday-students-grid.count-1{
+            grid-template-columns:minmax(220px, 280px);
+        }
+        .bday-students-grid.count-1 .bday-photo-box{
+            width:190px;height:190px;
+        }
+        .bday-students-grid.count-1 .bday-card-name{
+            font-size:1.35rem;
+        }
+
+        /* 2 Students */
+        .bday-students-grid.count-2{
+            grid-template-columns:repeat(2, minmax(140px, 220px));
+        }
+        .bday-students-grid.count-2 .bday-photo-box{
+            width:140px;height:140px;
+        }
+        .bday-students-grid.count-2 .bday-card-name{
+            font-size:1.15rem;
+        }
+
+        /* 3 Students */
+        .bday-students-grid.count-3{
+            grid-template-columns:repeat(3, minmax(130px, 190px));
+        }
+        .bday-students-grid.count-3 .bday-photo-box{
+            width:120px;height:120px;
+        }
+        .bday-students-grid.count-3 .bday-card-name{
+            font-size:1.02rem;
+        }
+
+        /* 4 or more Students */
+        .bday-students-grid.count-many{
+            grid-template-columns:repeat(auto-fit, minmax(130px, 180px));
+            max-height:50vh;
+            overflow-y:auto;
+            padding:4px;
+        }
+        .bday-students-grid.count-many .bday-photo-box{
+            width:110px;height:110px;
+        }
+        .bday-students-grid.count-many .bday-card-name{
+            font-size:.96rem;
+        }
+
+        /* Individual Birthday Student Tile */
+        .bday-tile{
+            background:rgba(255,255,255,0.06);
+            border:2px solid rgba(255,179,71,0.45);
+            border-radius:18px;
+            padding:14px 10px;
+            text-align:center;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            box-shadow:0 8px 24px rgba(0,0,0,.4);
+            position:relative;
+            transition:transform .2s;
+        }
+        .bday-tile:hover{transform:translateY(-2px);border-color:#FFB347}
+
+        .bday-photo-box{
+            margin:0 auto 10px;
+            border-radius:16px;
+            overflow:hidden;
+            border:2.5px solid #FFB347;
+            background:#18192d;
+            box-shadow:0 6px 20px rgba(0,0,0,.6), 0 0 16px rgba(255,179,71,.35);
+            position:relative;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            flex-shrink:0;
+        }
+        .bday-photo-box img{
+            width:100%;height:100%;object-fit:cover;display:block;
+        }
+        .bday-photo-box .bday-char{
+            font-size:3.2rem;font-weight:900;color:#fff;
+            display:flex;align-items:center;justify-content:center;width:100%;height:100%;
+        }
+        .bday-card-name{
+            font-family:'Poppins',sans-serif;
+            font-weight:800;
+            color:#ffffff;
+            margin-bottom:3px;
+            letter-spacing:.2px;
+            word-break:break-word;
+            line-height:1.25;
+        }
+        .bday-card-batch{
+            font-size:.76rem;color:#FDE68A;font-weight:600;margin-bottom:6px;
+        }
+        .bday-star-pill{
+            display:inline-flex;align-items:center;gap:4px;
+            font-size:.68rem;font-weight:800;padding:2px 8px;border-radius:10px;
+            background:linear-gradient(90deg,rgba(255,107,53,.3),rgba(255,179,71,.3));
+            color:#FFB347;border:1px solid rgba(255,179,71,.4);
+        }
+
+        .bday-msg-text{
+            font-size:.9rem;color:#FDE68A;line-height:1.6;font-weight:500;
+            background:rgba(251,191,36,.09);border:1px solid rgba(251,191,36,.25);
+            border-radius:14px;padding:12px 18px;margin-bottom:18px;
+        }
+        .bday-close-btn{
+            width:100%;padding:14px;border-radius:12px;border:none;
+            background:var(--grad);color:#fff;font-size:1rem;font-weight:800;
+            box-shadow:0 6px 20px rgba(255,107,53,.35);transition:all .2s;
+        }
+        .bday-close-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(255,107,53,.5)}
+
+        /* ── Toast ── */
+        #toast{
+            position:fixed;bottom:90px;right:20px;z-index:999;background:#141527;
+            border-radius:12px;padding:13px 18px;font-size:.86rem;font-weight:600;
+            display:flex;align-items:center;gap:10px;
+            transform:translateX(140%);transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+            border:1px solid var(--success);color:var(--success);box-shadow:0 8px 32px rgba(0,0,0,.5);
+        }
+        #toast.show{transform:translateX(0)}
+
+        /* ── Responsive Adaptations for Smart Boards & Phones ── */
+        @media(min-width:1280px){
+            .stu-grid{grid-template-columns:repeat(auto-fill, minmax(215px, 1fr));gap:20px}
+            .stu-name{font-size:1.1rem}
+            .school-name{font-size:1.3rem}
+            .btn-cs{font-size:1.02rem;padding:14px 30px}
+        }
+
+        @media(max-width:640px){
+            header{padding:8px 0}
+            .header-inner{padding:8px 14px}
+            .logo-box{width:44px;height:44px;border-radius:10px}
+            .school-name{font-size:.98rem}
+            .school-sub{font-size:.68rem}
+            main{padding:18px 12px 140px}
+            .card{padding:20px 16px;border-radius:18px}
+            .form-grid{grid-template-columns:1fr;gap:14px}
+            .sec-header{gap:10px;margin-bottom:16px}
+            .sec-title{font-size:1.05rem}
+            
+            /* 2-Column Grid on phones for perfect fit */
+            .stu-grid{
+                grid-template-columns:repeat(2, 1fr);
+                gap:10px;
+            }
+            .stu-card{padding:9px;border-radius:14px}
+            .stu-box-frame{border-radius:10px}
+            .stu-name{font-size:.92rem;line-height:1.22}
+            .stu-reg{font-size:.68rem}
+            .stu-status-badge{font-size:.65rem;padding:3px 8px}
+            .state-icon{width:28px;height:28px;font-size:.8rem;top:7px;right:7px}
+            .stu-char-avatar{font-size:2.4rem}
+
+            /* Footer on Mobile */
+            .footer-bar{padding:10px 14px;padding-bottom:max(10px, env(safe-area-inset-bottom))}
+            .footer-inner{flex-direction:column;gap:10px;align-items:stretch}
+            .stats-row{justify-content:space-around;gap:8px;font-size:.82rem}
+            .btn-cs{width:100%;justify-content:center;padding:12px}
+
+            .modal{padding:20px 16px;border-radius:18px}
+
+            /* Responsive Birthday Grid on mobile */
+            .bday-students-grid.count-2,
+            .bday-students-grid.count-3,
+            .bday-students-grid.count-many{
+                grid-template-columns:repeat(2, 1fr) !important;
+                gap:10px !important;
+            }
+            .bday-students-grid .bday-photo-box{
+                width:110px !important;height:110px !important;border-radius:12px;
+            }
+            .bday-title{font-size:1.35rem}
+            .bday-card-name{font-size:.95rem !important}
+            .bday-modal-wrap{width:95vw !important;padding:24px 14px 18px !important}
+        }
+        /* ── Report Preview Modal & Tabs ── */
+        .report-modal{
+            max-width:720px !important;
+            width:96%;
+            max-height:92vh;
+            overflow-y:auto;
+        }
+        .report-tabs{
+            display:flex;gap:0;margin-bottom:16px;border-radius:12px;overflow:hidden;
+            border:1px solid var(--border);background:rgba(255,255,255,0.03);
+        }
+        .report-tab{
+            flex:1;padding:12px 10px;text-align:center;font-size:.9rem;font-weight:700;
+            background:transparent;color:var(--txt2);border:none;cursor:pointer;
+            transition:all .2s;
+        }
+        .report-tab.active{
+            background:linear-gradient(135deg,rgba(255,107,53,.22),rgba(255,179,71,.18));
+            color:#fff;box-shadow:inset 0 -2px 0 var(--primary);
+        }
+        .report-tab:hover:not(.active){
+            background:rgba(255,255,255,.06);color:var(--txt1);
+        }
+        .report-tab-content{display:none}
+        .report-tab-content.active{display:block}
+        
+        .report-actions-row{
+            display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;
+        }
+        .report-actions-row button{
+            padding:12px 18px;border-radius:12px;font-size:.9rem;font-weight:800;
+            display:flex;align-items:center;justify-content:center;gap:8px;
+        }
+        .report-btn-copy{
+            background:var(--grad) !important;color:#fff !important;
+            box-shadow:0 4px 18px rgba(255,107,53,0.35);flex:1.3;
+        }
+        .report-btn-copy:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(255,107,53,0.5)}
+        
+        .copy-help-hint{
+            font-size:.78rem;color:var(--txt2);text-align:center;margin-bottom:14px;line-height:1.55;
+            padding:8px 14px;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid rgba(255,255,255,0.08);
+        }
+        .copy-help-hint kbd{
+            background:rgba(255,255,255,0.15);padding:1px 6px;border-radius:4px;font-size:.74rem;color:#fff;
+        }
+        
+        .report-image-wrap{
+            background:#0b0c16;border:1px solid rgba(255,255,255,.1);border-radius:16px;
+            padding:16px 12px;margin-bottom:14px;text-align:center;max-height:55vh;overflow-y:auto;
+        }
+        .report-image-wrap img{
+            max-width:100%;border-radius:12px;display:block;margin:0 auto;
+            box-shadow:0 8px 32px rgba(0,0,0,.65);border:1px solid rgba(255,255,255,0.12);
+        }
+        .report-image-placeholder{
+            padding:45px 20px;color:var(--txt3);font-size:.92rem;font-weight:600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+
+    <!-- Birthday Top Notification Banner (Click to open celebration) -->
+    <div id="bday-banner" onclick="openBirthdayCelebration()">
+        <div class="bday-inner">
+            <span>&#127874;</span>
+            <span id="bday-banner-text">Birthday Celebration Today!</span>
+            <span>&#127881;</span>
+            <span style="font-size:.75rem;opacity:.95;background:rgba(255,255,255,.25);padding:2px 8px;border-radius:10px;margin-left:6px">&#128065;&#65039; View</span>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="header-inner">
+            <div class="logo-wrap">
+                <div class="logo-box">
+                    <img src="https://images.seeklogo.com/logo-png/47/1/physics-wallah-logo-png_seeklogo-474856.png"
+                        alt="PW Logo"
+                        onerror="this.style.display='none';document.getElementById('logo-fallback').style.display='flex'">
+                    <div class="logo-txt" id="logo-fallback" style="display:none">PW</div>
+                </div>
+                <div>
+                    <!-- School Name in Pure White Color -->
+                    <div class="school-name">PW Alipurduar Vidyapeeth</div>
+                    <div class="school-sub">Student Tracker &nbsp;&bull;&nbsp; <span id="today-date"></span></div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="bday-pill-btn" id="bday-header-pill" onclick="openBirthdayCelebration()">
+                    <span>&#127874;</span> <span id="bday-pill-count">Birthdays</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Step 1: Batch & Subject Selection -->
+        <div class="card" id="selection-card">
+            <div class="card-head">
+                <div class="card-icon">&#128203;</div>
+                <div class="card-title">Select Batch &amp; Subject</div>
+            </div>
+            <div class="form-grid">
+                <div class="fg">
+                    <label for="batch-sel">Batch Code</label>
+                    <select class="ctrl" id="batch-sel">
+                        <option value="">&#8987; Loading batches&hellip;</option>
+                    </select>
+                </div>
+                <div class="fg">
+                    <label for="subject-sel">Subject</label>
+                    <select class="ctrl" id="subject-sel">
+                        <option value="">&#8212; Select Subject &#8212;</option>
+                        <option value="Physics">Physics</option>
+                        <option value="Chemistry">Chemistry</option>
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="Biology">Biology</option>
+                        <option value="Botany">Botany</option>
+                        <option value="Zoology">Zoology</option>
+                        <option value="English">English</option>
+                        <option value="SST">Social Studies (SST)</option>
+                    </select>
+                </div>
+                <div class="fg">
+                    <label for="date-inp">Date (IST)</label>
+                    <input type="date" class="ctrl" id="date-inp">
+                </div>
+            </div>
+            <button class="btn-primary" onclick="loadStudents()" type="button">
+                <span>&#128269;</span> Fetch Students
+            </button>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="loading-wrap">
+            <div class="spinner"></div>
+            <p>Fetching student roster from Google Sheets&hellip;</p>
+        </div>
+
+        <!-- Error Card -->
+        <div id="error-wrap">
+            <h3 style="margin-bottom:8px">&#9888;&#65039; Failed to Load Data</h3>
+            <p id="error-msg" style="font-size:.85rem;opacity:.9">Could not fetch data. Make sure the Google Sheet is published &amp; publicly viewable.</p>
+            <button class="btn-primary" style="margin-top:18px;width:auto;display:inline-flex;padding:12px 28px" onclick="fetchSheetData()" type="button">&#8634; Retry</button>
+        </div>
+
+        <!-- Step 2: Students Homework Tracking Section -->
+        <div id="students-wrap" style="display:none">
+            <div class="sec-header">
+                <div>
+                    <div class="sec-title" id="sec-title">Students</div>
+                    <div class="badges" id="sec-badges"></div>
+                </div>
+                <div class="sec-actions">
+                    <!-- Tap Guide Toggle Help Button -->
+                    <button class="btn-help" id="btn-guide-toggle" onclick="toggleTapGuide()" type="button">
+                        <span>&#8505;&#65039;</span> Tap Guide
+                    </button>
+                    <!-- Back button triggers confirmation warning -->
+                    <button class="btn-back" onclick="requestGoBack()" type="button">&#8592; Change Selection</button>
+                </div>
+            </div>
+
+            <!-- Collapsible Tap Guide (Hidden by default, toggled via Tap Guide button) -->
+            <div class="hint hint-hw" id="hint-hw" style="display:none">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px">
+                    <strong>&#128218; Homework Check Mode &mdash; Quick Guide:</strong>
+                    <button onclick="toggleTapGuide()" style="background:transparent;border:none;color:var(--txt2);font-size:1.05rem;cursor:pointer;padding:2px 8px" title="Close Guide">&#10005;</button>
+                </div>
+                <div class="legend">
+                    <div class="leg-item"><div class="leg-dot" style="background:#10B981"></div>Default &mdash; HW Done &#9989;</div>
+                    <div class="leg-item"><div class="leg-dot" style="background:#F59E0B"></div>Single Tap &mdash; Not Done &#9888;&#65039;</div>
+                    <div class="leg-item"><div class="leg-dot" style="background:#8B5CF6"></div>Double Tap &mdash; Absent &#128683;</div>
+                    <div class="leg-item"><div class="leg-dot" style="background:var(--border-h)"></div>Tap Again &mdash; Reset</div>
+                </div>
+            </div>
+
+            <!-- Bulk Mark Options (NO RED) -->
+            <div class="bulk-row">
+                <button class="sm-btn amber-btn" onclick="markAllNotDone()" type="button">&#9888;&#65039; Mark All Not Done</button>
+                <button class="sm-btn green-btn" onclick="clearAll()" type="button">&#8634; Reset All (HW Done)</button>
+            </div>
+
+            <!-- Student Grid -->
+            <div class="stu-grid" id="stu-grid"></div>
+        </div>
+    </main>
+
+    <!-- Bottom Action & Stats Bar (NO RED) -->
+    <div class="footer-bar" id="footer-bar" style="display:none">
+        <div class="footer-inner">
+            <div class="stats-row" id="stats-row"></div>
+            <button class="btn-cs" onclick="generateReport()" type="button">&#128202; Generate Report</button>
+        </div>
+    </div>
+
+    <!-- Front Page Birthday Celebration Modal: All Students on Same Screen + Confetti -->
+    <div class="overlay" id="bday-overlay">
+        <div class="modal bday-modal-wrap" id="bday-modal-box">
+            <canvas id="bday-canvas"></canvas>
+            <div class="bday-modal-content">
+                <div class="bday-badge-top">&#10024; TODAY'S SPECIAL CELEBRATION &#127881;</div>
+                <h2 class="bday-title">&#127874; Happy Birthday! &#127881;</h2>
+                <div class="bday-subtitle" id="bday-count-subtitle">Wishing our star students a fantastic birthday!</div>
+
+                <!-- Responsive Grid: Multiple Students render on same screen -->
+                <div class="bday-students-grid" id="bday-students-grid"></div>
+
+                <div class="bday-msg-text">
+                    &#127881; <em>Wishing you joy, good health, and glorious academic achievements on your special day!</em>
+                </div>
+
+                <button class="bday-close-btn" onclick="closeBirthdayModal()" type="button">
+                    &#127881; Celebrate &amp; Continue
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back Confirmation Warning Modal (NO RED) -->
+    <div class="overlay" id="warn-overlay">
+        <div class="modal warn-modal">
+            <div class="warn-icon">&#9888;&#65039;</div>
+            <div class="warn-title">Leave Homework Tracker?</div>
+            <div class="warn-desc">
+                Going back will reset current selections and any student marks you have made. Are you sure you want to return to the selection page?
+            </div>
+            <div class="warn-actions">
+                <button class="btn-secondary" onclick="closeOverlay('warn-overlay')" type="button">Stay Here</button>
+                <button class="btn-amber" onclick="confirmGoBack()" type="button">Yes, Go Back</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Preview Modal (Tabbed: Visual Image + WhatsApp Text) -->
+    <div class="overlay" id="msg-overlay">
+        <div class="modal report-modal">
+            <div class="mod-head">
+                <div class="mod-title">📊 PW Vidyapeeth Report Card</div>
+                <button class="mod-close" onclick="closeOverlay('msg-overlay')" type="button">&#10005;</button>
+            </div>
+            <div class="report-tabs">
+                <button class="report-tab active" onclick="switchReportTab('image')" id="tab-image">🖼️ Visual Image Report</button>
+                <button class="report-tab" onclick="switchReportTab('text')" id="tab-text">📝 WhatsApp Text</button>
+            </div>
+            <div class="report-tab-content active" id="tab-content-image">
+                <div class="report-actions-row">
+                    <button class="btn-fill report-btn-copy" onclick="copyImage()" type="button" id="copy-img-btn">
+                        📋 Copy Image
+                    </button>
+                    <button class="btn-outline" onclick="downloadImage()" type="button" id="dl-img-btn" style="flex:1">
+                        ⬇️ Download
+                    </button>
+                    <button class="btn-outline" onclick="openForm()" type="button" style="flex:1">
+                        📝 Google Form
+                    </button>
+                </div>
+                <div class="copy-help-hint">
+                    💡 <strong>Tip for Teachers:</strong> Tap <b>Copy Image</b> to paste (<kbd>Ctrl+V</kbd>) directly into WhatsApp. On phones, tap <b>Download</b> or long-press the image to share!
+                </div>
+                <div class="report-image-wrap" id="report-image-wrap">
+                    <div class="report-image-placeholder">⏳ Generating visual report...</div>
+                </div>
+            </div>
+            <div class="report-tab-content" id="tab-content-text">
+                <div class="msg-box" id="msg-box"></div>
+                <div class="mod-actions">
+                    <button class="btn-outline" id="copy-btn" onclick="copyMsg()" type="button">📋 Copy Text</button>
+                    <button class="btn-fill" id="form-btn" onclick="openForm()" type="button">📝 Open Google Form</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast"><span id="toast-icon">&#9989;</span><span id="toast-msg">Done!</span></div>
+
+    <script>
+        /* ── CONFIGURATION ─────────────────────────────────── */
+        const SHEET_ID = '122GqnUBcq_9AQdx20fZHXUqxtydXLXjARgqeTjlxDZA';
+        const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSffiF5t58ZTq1Vs6txA1MT2mEDhk9iQdMiJexH43rAby5kzsg/viewform?usp=publish-editor';
+
+        /* ── STATE CONSTANTS ───────────────────────────────── */
+        const S_DONE     = 0;   // HW Done (Default)
+        const S_NOT_DONE = 1;   // Single Tap -> Not Done (Sunburst Amber)
+        const S_ABSENT   = 2;   // Double Tap -> Absent (Neon Violet)
+
+        /* ── DIVERSE PALETTES FOR RANDOM INITIAL AVATARS ───── */
+        const AVATAR_PALETTES = [
+            ['#FF6B35','#FF9F43'], ['#7C3AED','#A855F7'], ['#059669','#10B981'],
+            ['#0284C7','#38BDF8'], ['#8B5CF6','#C084FC'], ['#D97706','#FBBF24'],
+            ['#0891B2','#06B6D4'], ['#65A30D','#84CC16'], ['#4F46E5','#6366F1'],
+            ['#0D9488','#14B8A6'], ['#CA8A04','#EAB308'], ['#2563EB','#60A5FA']
+        ];
+
+        /* ── APP STATE ─────────────────────────────────────── */
+        let allStudents    = [];
+        let batchStudents  = [];
+        let cardStates     = [];
+        let birthdayList   = [];
+        let lastTap        = { idx: -1, time: 0 };
+        const DBL_MS       = 380;
+        let isStudentsView = false;
+        let guideVisible   = false;
+
+        /* ── INIT ON LOAD (STRICT INDIAN STANDARD TIME - IST) ─ */
+        document.addEventListener('DOMContentLoaded', () => {
+            const now = new Date();
+
+            // Format Header Date in Indian Standard Time (IST - Asia/Kolkata)
+            const istDateHeader = now.toLocaleDateString('en-IN', {
+                timeZone: 'Asia/Kolkata',
+                weekday: 'long',
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric'
+            });
+            document.getElementById('today-date').textContent = istDateHeader;
+
+            // Set Date Input Default strictly in Indian Standard Time (YYYY-MM-DD)
+            const istDateParts = new Intl.DateTimeFormat('en-CA', {
+                timeZone: 'Asia/Kolkata',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            }).format(now);
+            document.getElementById('date-inp').value = istDateParts;
+            
+            fetchSheetData();
+
+            // Overlay backdrop click to close
+            document.querySelectorAll('.overlay').forEach(el => {
+                el.addEventListener('click', e => {
+                    if (e.target === el) {
+                        if (el.id === 'warn-overlay') closeOverlay('warn-overlay');
+                        else if (el.id === 'bday-overlay') closeBirthdayModal();
+                        else closeOverlay(el.id);
+                    }
+                });
+            });
+
+            // Browser back button interception
+            window.addEventListener('popstate', (e) => {
+                if (isStudentsView) {
+                    history.pushState({ inStudents: true }, '');
+                    requestGoBack();
+                }
+            });
+
+            // Prevent accidental tab closure if marks made
+            window.addEventListener('beforeunload', (e) => {
+                if (isStudentsView && cardStates.some(s => s !== S_DONE)) {
+                    e.preventDefault();
+                    e.returnValue = '';
+                }
+            });
+        });
+
+        /* ── FETCH GOOGLE SHEET DATA ───────────────────────── */
+        function fetchSheetData() {
+            document.getElementById('loading-wrap').style.display   = 'flex';
+            document.getElementById('error-wrap').style.display     = 'none';
+            document.getElementById('selection-card').style.display = 'none';
+
+            const url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID +
+                        '/gviz/tq?tqx=out:json&t=' + Date.now();
+            fetch(url)
+                .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+                .then(text => {
+                    const m = text.match(/setResponse\(([\s\S]+)\)\s*;?\s*$/);
+                    if (!m) throw new Error('Bad response format');
+                    parseSheet(JSON.parse(m[1]));
+                    document.getElementById('loading-wrap').style.display   = 'none';
+                    document.getElementById('selection-card').style.display = 'block';
+                })
+                .catch(err => {
+                    document.getElementById('loading-wrap').style.display   = 'none';
+                    document.getElementById('error-msg').textContent = err.message + ' — Ensure the sheet is publicly accessible.';
+                    document.getElementById('error-wrap').style.display     = 'block';
+                    document.getElementById('selection-card').style.display = 'block';
+                });
+        }
+
+        /* ── PARSE GOOGLE SHEET JSON ───────────────────────── */
+        function parseSheet(data) {
+            const cols = data.table.cols;
+            const rows = data.table.rows;
+            const idx  = {};
+            cols.forEach((c, i) => { 
+                if (c && c.label) idx[c.label.trim().toLowerCase().replace(/[\s_]+/g, '_')] = i; 
+            });
+
+            const getV = (row, key) => {
+                const i = idx[key];
+                if (i === undefined) return '';
+                const cell = row.c[i];
+                if (!cell) return '';
+                return (cell.f !== undefined && cell.f !== null) ? String(cell.f)
+                     : (cell.v !== null && cell.v !== undefined ? String(cell.v) : '');
+            };
+
+            allStudents = rows.map(row => ({
+                reg_no : getV(row, 'reg_no'),
+                name   : getV(row, 'student_name'),
+                batch  : getV(row, 'batch_code'),
+                dob    : getV(row, 'dob'),
+                photo  : getV(row, 'photo_url').trim()
+            })).filter(s => s.name && s.batch);
+
+            // Populate Batch Dropdown
+            const batches = [...new Set(allStudents.map(s => s.batch))].sort();
+            const sel = document.getElementById('batch-sel');
+            sel.innerHTML = '<option value="">\u2014 Select Batch \u2014</option>' +
+                batches.map(b => '<option value="' + esc(b) + '">' + esc(b) + '</option>').join('');
+
+            checkBirthdays();
+        }
+
+        /* ── DATE OF BIRTH PARSING (DD-MM-YYYY format in sheet) ── */
+        function parseMD(dob) {
+            if (!dob) return null;
+            const s = String(dob).trim();
+            
+            // 1. Google Sheets GViz date object: Date(yyyy, m, d) -> m is 0-indexed
+            let m = s.match(/Date\((\d+),(\d+),(\d+)\)/);
+            if (m) {
+                const mm = pad(+m[2] + 1);
+                const dd = pad(+m[3]);
+                return mm + '-' + dd; // Returns MM-DD
+            }
+
+            // 2. Strict DD-MM-YYYY or DD/MM/YYYY or DD.MM.YYYY
+            m = s.match(/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})/);
+            if (m) {
+                const dd = pad(+m[1]);
+                const mm = pad(+m[2]);
+                return mm + '-' + dd; // Returns MM-DD
+            }
+
+            // 3. YYYY-MM-DD
+            m = s.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})/);
+            if (m) {
+                const mm = pad(+m[2]);
+                const dd = pad(+m[3]);
+                return mm + '-' + dd; // Returns MM-DD
+            }
+
+            // 4. DD-MM or DD/MM
+            m = s.match(/^(\d{1,2})[-/.](\d{1,2})$/);
+            if (m) {
+                const dd = pad(+m[1]);
+                const mm = pad(+m[2]);
+                return mm + '-' + dd; // Returns MM-DD
+            }
+
+            return null;
+        }
+
+        /* ── ALL BIRTHDAY STUDENTS SHOWN TOGETHER ON SAME SCREEN ── */
+        function checkBirthdays() {
+            // Strictly check Month & Day in Indian Standard Time (Asia/Kolkata)
+            const now = new Date();
+            const istMDParts = new Intl.DateTimeFormat('en-US', {
+                timeZone: 'Asia/Kolkata',
+                month: '2-digit',
+                day: '2-digit'
+            }).format(now);
+            const [istMonth, istDay] = istMDParts.split('/');
+            const todayMD = istMonth + '-' + istDay; // MM-DD in IST
+            
+            birthdayList = allStudents.filter(s => parseMD(s.dob) === todayMD);
+            if (!birthdayList.length) return;
+
+            // Show top banner & header pill
+            const banner = document.getElementById('bday-banner');
+            const pill   = document.getElementById('bday-header-pill');
+            banner.style.display = 'block';
+            pill.style.display   = 'inline-flex';
+            document.getElementById('bday-pill-count').textContent = birthdayList.length + ' Birthday' + (birthdayList.length > 1 ? 's' : '');
+
+            if (birthdayList.length === 1) {
+                document.getElementById('bday-banner-text').textContent = '🎂 Happy Birthday, ' + birthdayList[0].name + '! 🎉';
+            } else {
+                document.getElementById('bday-banner-text').textContent = '🎂 ' + birthdayList.length + ' Students Celebrate Birthdays Today! 🎉';
+            }
+
+            // Pop up front-page celebratory card automatically
+            openBirthdayCelebration();
+        }
+
+        function openBirthdayCelebration() {
+            if (!birthdayList.length) return;
+            renderAllBirthdaysOnScreen();
+            openOverlay('bday-overlay');
+            startConfetti();
+        }
+
+        function closeBirthdayModal() {
+            closeOverlay('bday-overlay');
+            stopConfetti();
+        }
+
+        /* Renders all birthday students onto the same screen, scaling sizes automatically */
+        function renderAllBirthdaysOnScreen() {
+            const grid = document.getElementById('bday-students-grid');
+            const box  = document.getElementById('bday-modal-box');
+            const sub  = document.getElementById('bday-count-subtitle');
+            const count = birthdayList.length;
+
+            grid.className = 'bday-students-grid';
+
+            if (count === 1) {
+                grid.classList.add('count-1');
+                box.style.maxWidth = '520px';
+                sub.textContent = 'Special Birthday Wishes to our Star Student!';
+            } else if (count === 2) {
+                grid.classList.add('count-2');
+                box.style.maxWidth = '640px';
+                sub.textContent = 'Special Birthday Wishes to our 2 Star Students Today!';
+            } else if (count === 3) {
+                grid.classList.add('count-3');
+                box.style.maxWidth = '780px';
+                sub.textContent = 'Special Birthday Wishes to our 3 Star Students Today!';
+            } else {
+                grid.classList.add('count-many');
+                box.style.maxWidth = '860px';
+                sub.textContent = 'Special Birthday Celebrations for ' + count + ' Students Today!';
+            }
+
+            grid.innerHTML = birthdayList.map((s) => {
+                const initial  = (s.name.trim()[0] || '?').toUpperCase();
+                const hasPhoto = s.photo && s.photo.startsWith('http');
+                const grad     = avatarGrad(s.name);
+
+                const photoHtml = hasPhoto
+                    ? '<img src="' + esc(s.photo) + '" alt="' + esc(s.name) + '" ' +
+                      'onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';this.parentElement.style.background=\'' + grad + '\'">' +
+                      '<div class="bday-char" style="display:none;background:' + grad + '">' + initial + '</div>'
+                    : '<div class="bday-char" style="background:' + grad + '">' + initial + '</div>';
+
+                return '<div class="bday-tile">' +
+                    '<div class="bday-photo-box" style="background:' + grad + '">' +
+                        photoHtml +
+                    '</div>' +
+                    '<div class="bday-card-name">' + esc(s.name) + '</div>' +
+                    '<div class="bday-card-batch">' + esc(s.batch) + (s.reg_no ? ' &bull; ' + esc(s.reg_no) : '') + '</div>' +
+                    '<div class="bday-star-pill">&#127874; Birthday Star</div>' +
+                    '</div>';
+            }).join('');
+        }
+
+        /* ── CONFETTI PARTICLES FOR BIRTHDAY CELEBRATION ───── */
+        let confettiAnimation = null;
+        function startConfetti() {
+            const canvas = document.getElementById('bday-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+
+            const particles = [];
+            const colors = ['#FF6B35','#FFB347','#EC4899','#8B5CF6','#10B981','#FBBF24','#38BDF8'];
+            for (let i = 0; i < 80; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    w: Math.random() * 8 + 4,
+                    h: Math.random() * 6 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    vy: Math.random() * 2.5 + 1.5,
+                    vx: Math.random() * 2 - 1,
+                    rot: Math.random() * 360,
+                    vrot: Math.random() * 6 - 3
+                });
+            }
+
+            function frame() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.y += p.vy;
+                    p.x += p.vx;
+                    p.rot += p.vrot;
+                    if (p.y > canvas.height) {
+                        p.y = -10;
+                        p.x = Math.random() * canvas.width;
+                    }
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate((p.rot * Math.PI) / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                    ctx.restore();
+                });
+                confettiAnimation = requestAnimationFrame(frame);
+            }
+            if (confettiAnimation) cancelAnimationFrame(confettiAnimation);
+            confettiAnimation = requestAnimationFrame(frame);
+        }
+
+        function stopConfetti() {
+            if (confettiAnimation) {
+                cancelAnimationFrame(confettiAnimation);
+                confettiAnimation = null;
+            }
+            const canvas = document.getElementById('bday-canvas');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+
+        /* ── AVATAR BACKGROUND COLOR (Deterministic Hash) ──── */
+        function avatarGrad(name) {
+            let h = 0;
+            for (let i = 0; i < name.length; i++) h = name.charCodeAt(i) + ((h << 5) - h);
+            const p = AVATAR_PALETTES[Math.abs(h) % AVATAR_PALETTES.length];
+            return 'linear-gradient(135deg,' + p[0] + ',' + p[1] + ')';
+        }
+
+        /* ── TAP GUIDE TOGGLE (COLLAPSIBLE / HELP BUTTON) ──── */
+        function toggleTapGuide() {
+            guideVisible = !guideVisible;
+            const hintEl = document.getElementById('hint-hw');
+            const btnEl  = document.getElementById('btn-guide-toggle');
+            if (hintEl) hintEl.style.display = guideVisible ? 'block' : 'none';
+            if (btnEl)  btnEl.classList.toggle('active', guideVisible);
+        }
+
+        /* ── LOAD STUDENTS FOR TRACKING ────────────────────── */
+        function loadStudents() {
+            const batch   = document.getElementById('batch-sel').value;
+            const subject = document.getElementById('subject-sel').value;
+            if (!batch)   { toast('Please select a batch!', 'err'); return; }
+            if (!subject) { toast('Please select a subject!', 'err'); return; }
+
+            batchStudents = allStudents.filter(s => s.batch === batch);
+            if (!batchStudents.length) { toast('No students found in this batch.', 'err'); return; }
+
+            cardStates = new Array(batchStudents.length).fill(S_DONE);
+            lastTap    = { idx: -1, time: 0 };
+
+            document.getElementById('sec-title').textContent = '\uD83D\uDCDA Homework Check \u2014 ' + batch;
+            const ds = fmtDate(document.getElementById('date-inp').value);
+            document.getElementById('sec-badges').innerHTML =
+                '<span class="badge badge-o">\uD83D\uDCE6 ' + esc(batch)  + '</span>' +
+                '<span class="badge badge-g">\uD83D\uDC65 ' + batchStudents.length + ' Students</span>' +
+                '<span class="badge badge-y">\uD83D\uDCC5 ' + ds + '</span>';
+
+            // Ensure tap guide starts hidden
+            guideVisible = false;
+            document.getElementById('hint-hw').style.display = 'none';
+            const btnHelp = document.getElementById('btn-guide-toggle');
+            if (btnHelp) btnHelp.classList.remove('active');
+
+            renderStudents();
+
+            document.getElementById('selection-card').style.display = 'none';
+            document.getElementById('students-wrap').style.display  = 'block';
+            document.getElementById('footer-bar').style.display     = 'block';
+            isStudentsView = true;
+            
+            // Push state for device back-button handling
+            history.pushState({ inStudents: true }, '');
+
+            updateStats();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /* ── RENDER STUDENTS GRID (Box Photo Frame + Big Name) ── */
+        function renderStudents() {
+            const now = new Date();
+            const istMDParts = new Intl.DateTimeFormat('en-US', {
+                timeZone: 'Asia/Kolkata',
+                month: '2-digit',
+                day: '2-digit'
+            }).format(now);
+            const [istMonth, istDay] = istMDParts.split('/');
+            const todayMD = istMonth + '-' + istDay; // MM-DD in IST
+
+            const grid = document.getElementById('stu-grid');
+
+            grid.innerHTML = batchStudents.map((s, i) => {
+                const initial  = (s.name.trim()[0] || '?').toUpperCase();
+                const isBday   = parseMD(s.dob) === todayMD;
+                const hasPhoto = s.photo && s.photo.startsWith('http');
+                const grad     = avatarGrad(s.name);
+
+                // Box frame for photo / random initial char
+                const photoBoxHtml = hasPhoto
+                    ? '<div class="stu-box-frame" id="sbf-' + i + '">' +
+                        '<img class="stu-img" src="' + esc(s.photo) + '" alt="' + esc(s.name) + '" ' +
+                        'onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';this.parentElement.style.background=\'' + grad + '\'">' +
+                        '<div class="stu-char-avatar" style="display:none;background:' + grad + '">' + initial + '</div>' +
+                      '</div>'
+                    : '<div class="stu-box-frame" style="background:' + grad + '">' +
+                        '<div class="stu-char-avatar">' + initial + '</div>' +
+                      '</div>';
+
+                return '<div class="stu-card" id="sc-' + i + '" ' +
+                    'onclick="handleTap(' + i + ', event)" ' +
+                    'role="button" tabindex="0" ' +
+                    'onkeydown="if(event.key===\' \'){event.preventDefault();handleTap(' + i + ', event)}">' +
+                    '<div class="state-icon" id="sb-' + i + '"></div>' +
+                    photoBoxHtml +
+                    '<div class="stu-info">' +
+                        '<div class="stu-name" title="' + esc(s.name) + '">' + esc(s.name) + '</div>' +
+                        '<div class="stu-reg">' + (s.reg_no ? esc(s.reg_no) : 'Student #' + (i + 1)) + '</div>' +
+                        '<div class="stu-status-badge" id="ss-' + i + '">Done</div>' +
+                        (isBday ? '<div class="stu-bday-tag">&#127874; Birthday Today!</div>' : '') +
+                    '</div>' +
+                    '</div>';
+            }).join('');
+        }
+
+        /* ── TAP HANDLER (Single: Not Done [Amber] | Double: Absent [Violet]) ── */
+        function handleTap(i, event) {
+            const now      = Date.now();
+            const isDouble = (lastTap.idx === i) && (now - lastTap.time) <= DBL_MS;
+
+            if (isDouble) {
+                // Double tap toggles ABSENT or resets to DONE
+                cardStates[i] = (cardStates[i] === S_ABSENT) ? S_DONE : S_ABSENT;
+                lastTap = { idx: -1, time: 0 };
+            } else {
+                // Single tap cycles DONE -> NOT DONE -> DONE (if absent, reset to done)
+                if      (cardStates[i] === S_DONE)     cardStates[i] = S_NOT_DONE;
+                else if (cardStates[i] === S_NOT_DONE) cardStates[i] = S_DONE;
+                else if (cardStates[i] === S_ABSENT)   cardStates[i] = S_DONE;
+                lastTap = { idx: i, time: now };
+            }
+
+            applyState(i);
+            spawnRipple(i);
+            updateStats();
+        }
+
+        function applyState(i) {
+            const card  = document.getElementById('sc-' + i);
+            const badge = document.getElementById('ss-' + i);
+            const icon  = document.getElementById('sb-' + i);
+            if (!card) return;
+
+            card.classList.remove('not-done', 'absent');
+            const st = cardStates[i];
+
+            if (st === S_NOT_DONE) {
+                card.classList.add('not-done');
+                badge.textContent = '\u26A0\uFE0F Not Done';
+                icon.textContent  = '\u26A0\uFE0F';
+            } else if (st === S_ABSENT) {
+                card.classList.add('absent');
+                badge.textContent = '\uD83D\uDEAB Absent';
+                icon.textContent  = '\uD83D\uDEAB';
+            } else {
+                badge.textContent = 'Done';
+                icon.textContent  = '';
+            }
+        }
+
+        function spawnRipple(i) {
+            const card = document.getElementById('sc-' + i);
+            if (!card) return;
+            const color = cardStates[i] === S_ABSENT ? 'rgba(139,92,246,.4)'
+                        : cardStates[i] === S_NOT_DONE ? 'rgba(245,158,11,.4)'
+                        : 'rgba(16,185,129,.25)';
+            const r = document.createElement('div');
+            r.className = 'ripple-el';
+            r.style.background = color;
+            card.appendChild(r);
+            setTimeout(() => r.remove(), 600);
+        }
+
+        function markAllNotDone() {
+            batchStudents.forEach((_, i) => { cardStates[i] = S_NOT_DONE; applyState(i); });
+            updateStats();
+            toast('Marked all as Not Done');
+        }
+
+        function clearAll() {
+            batchStudents.forEach((_, i) => { cardStates[i] = S_DONE; applyState(i); });
+            updateStats();
+            toast('Reset all to HW Done');
+        }
+
+        /* ── STATS COUNTER (NO RED) ────────────────────────── */
+        function updateStats() {
+            const total   = batchStudents.length;
+            const absent  = cardStates.filter(s => s === S_ABSENT).length;
+            const notDone = cardStates.filter(s => s === S_NOT_DONE).length;
+            const done    = total - absent - notDone;
+            document.getElementById('stats-row').innerHTML =
+                '<div class="stat-item"><div class="stat-dot" style="background:#10B981"></div>' +
+                '<span style="color:#10B981;font-weight:800">' + done    + ' HW Done \u2705</span></div>' +
+                '<div class="stat-item"><div class="stat-dot" style="background:#F59E0B"></div>' +
+                '<span style="color:#F59E0B;font-weight:800">'  + notDone + ' Not Done \u26A0\uFE0F</span></div>' +
+                '<div class="stat-item"><div class="stat-dot" style="background:#8B5CF6"></div>' +
+                '<span style="color:#8B5CF6;font-weight:800">'  + absent  + ' Absent \uD83D\uDEAB</span></div>';
+        }
+
+        /* ── BACK BUTTON WARNING FLOW ──────────────────────── */
+        function requestGoBack() {
+            const hasMarks = cardStates.some(s => s !== S_DONE);
+            if (hasMarks) {
+                openOverlay('warn-overlay');
+            } else {
+                confirmGoBack();
+            }
+        }
+
+        function confirmGoBack() {
+            closeOverlay('warn-overlay');
+            document.getElementById('students-wrap').style.display  = 'none';
+            document.getElementById('footer-bar').style.display     = 'none';
+            document.getElementById('selection-card').style.display = 'block';
+            cardStates     = [];
+            lastTap        = { idx: -1, time: 0 };
+            isStudentsView = false;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /* ── REPORT TAB SWITCHING ──────────────────────────── */
+        function switchReportTab(tab) {
+            const isImg = tab === 'image';
+            document.getElementById('tab-image').classList.toggle('active', isImg);
+            document.getElementById('tab-text').classList.toggle('active', !isImg);
+            document.getElementById('tab-content-image').classList.toggle('active', isImg);
+            document.getElementById('tab-content-text').classList.toggle('active', !isImg);
+        }
+
+        /* ── CANVAS REFERENCE FOR IMAGE EXPORT ────────────── */
+        let reportCanvas = null;
+
+        /* ── ROUNDED RECTANGLE HELPER (Universal Support) ──── */
+        function drawRoundRect(ctx, x, y, w, h, r) {
+            if (typeof r === 'number') r = [r, r, r, r];
+            const [tl, tr, br, bl] = r;
+            ctx.beginPath();
+            ctx.moveTo(x + tl, y);
+            ctx.lineTo(x + w - tr, y);
+            ctx.quadraticCurveTo(x + w, y, x + w, y + tr);
+            ctx.lineTo(x + w, y + h - br);
+            ctx.quadraticCurveTo(x + w, y + h, x + w - br, y + h);
+            ctx.lineTo(x + bl, y + h);
+            ctx.quadraticCurveTo(x, y + h, x, y + h - bl);
+            ctx.lineTo(x, y + tl);
+            ctx.quadraticCurveTo(x, y, x + tl, y);
+            ctx.closePath();
+        }
+
+        /* ── DATE FORMATTER FOR UPPERCASE HEADER ───────────── */
+        function fmtDateUpper(v) {
+            if (!v) return '—';
+            const d = new Date(v + 'T00:00:00');
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = d.toLocaleDateString('en-US', { month: 'long' }).toUpperCase();
+            const year = d.getFullYear();
+            return day + ' ' + month + ' ' + year;
+        }
+
+        /* ── CANVAS 2D REPORT CARD GENERATOR ───────────────── */
+        /* Exact pixel-perfect implementation of the PW Vidyapeeth report card */
+        function drawReportCanvas(data) {
+            const { dateStr, subject, batch, absentList, notDoneList, doneList, presentCount, totalStudents, istTimestamp } = data;
+
+            const W = 680;
+            const pad = 20;
+            const contentW = W - pad * 2; // 640px
+            const rowH = 26;
+
+            // Dimensions calculation
+            const headerH = 100;
+            const infoH = 52;
+            const statsH = 76;
+
+            // HW Not Submitted
+            const hwNotHeaderH = 38;
+            const hwNotRows = Math.max(notDoneList.length, 1);
+            const hwNotNoticeH = notDoneList.length > 0 ? 32 : 0;
+            const hwNotBodyH = hwNotRows * rowH + hwNotNoticeH + 12;
+            const hwNotSectionH = hwNotHeaderH + hwNotBodyH;
+
+            // Two Columns
+            const colW = Math.floor((contentW - 14) / 2); // 313px
+
+            // Left Col (Absent)
+            const absentHeaderH = 36;
+            const absentRows = Math.max(absentList.length, 1);
+            const absentBodyH = absentRows * rowH + 14;
+            const leftColH = absentHeaderH + absentBodyH;
+
+            // Right Col (Submitted + Present Box)
+            const doneHeaderH = 36;
+            const doneRows = Math.max(doneList.length, 1);
+            const doneBodyH = doneRows * rowH + 14;
+            const doneSectionH = doneHeaderH + doneBodyH;
+            const presentBoxH = 96;
+            const rightColH = doneSectionH + 14 + presentBoxH;
+
+            const twoColH = Math.max(leftColH, rightColH);
+            const footerH = 52;
+
+            // Total dynamic canvas height
+            const totalH = pad + headerH + 14 + infoH + 14 + statsH + 16 + hwNotSectionH + 16 + twoColH + 20 + footerH + pad;
+
+            // Setup Canvas with 2x High-DPI scaling
+            const scale = 2;
+            const canvas = document.createElement('canvas');
+            canvas.width = W * scale;
+            canvas.height = totalH * scale;
+            const ctx = canvas.getContext('2d');
+            ctx.scale(scale, scale);
+
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+
+            // Background: #f1f5f9
+            ctx.fillStyle = '#f1f5f9';
+            drawRoundRect(ctx, 0, 0, W, totalH, 0);
+            ctx.fill();
+
+            let curY = pad;
+
+            // ── 1. Top Header Card (Pure White) ──
+            ctx.fillStyle = '#ffffff';
+            drawRoundRect(ctx, pad, curY, contentW, headerH, 14);
+            ctx.fill();
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // Circular PW Logo (Monogram)
+            const logoX = pad + 38;
+            const logoY = curY + headerH / 2;
+            const logoRadius = 26;
+
+            ctx.save();
+            ctx.fillStyle = '#000000';
+            ctx.beginPath();
+            ctx.arc(logoX, logoY, logoRadius, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.font = 'bold 22px "Times New Roman", Georgia, serif';
+            ctx.fillText('P', logoX - 4, logoY - 7);
+            ctx.font = 'bold 19px "Times New Roman", Georgia, serif';
+            ctx.fillText('W', logoX + 5, logoY + 8);
+            ctx.restore();
+
+            // Header Text Block
+            const textStartX = logoX + logoRadius + 18;
+
+            // VIDYAPEETH
+            ctx.fillStyle = '#111827';
+            ctx.font = '900 27px Poppins, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            ctx.fillText('VIDYAPEETH', textStartX, curY + 14);
+
+            // IIT-JEE | NEET | FOUNDATION
+            const tagY = curY + 48;
+            ctx.font = '800 13px Inter, -apple-system, BlinkMacSystemFont, sans-serif';
+            let currX = textStartX;
+            ctx.fillStyle = '#e11d48';
+            ctx.fillText('IIT-JEE', currX, tagY);
+            currX += ctx.measureText('IIT-JEE').width;
+
+            ctx.fillStyle = '#9ca3af';
+            ctx.fillText('  |  ', currX, tagY);
+            currX += ctx.measureText('  |  ').width;
+
+            ctx.fillStyle = '#0f766e';
+            ctx.fillText('NEET', currX, tagY);
+            currX += ctx.measureText('NEET').width;
+
+            ctx.fillStyle = '#9ca3af';
+            ctx.fillText('  |  ', currX, tagY);
+            currX += ctx.measureText('  |  ').width;
+
+            ctx.fillStyle = '#e11d48';
+            ctx.fillText('FOUNDATION', currX, tagY);
+
+            // HOMEWORK & ATTENDANCE REPORT
+            const repY = curY + 68;
+            ctx.fillStyle = '#15345d';
+            ctx.font = '800 12.5px Inter, -apple-system, BlinkMacSystemFont, sans-serif';
+            ctx.fillText('HOMEWORK & ATTENDANCE REPORT', textStartX, repY);
+
+            curY += headerH + 14;
+
+            // ── 2. Info Bar (Navy) ──
+            ctx.fillStyle = '#15345d';
+            drawRoundRect(ctx, pad, curY, contentW, infoH, 10);
+            ctx.fill();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '700 12px Inter, -apple-system, BlinkMacSystemFont, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            ctx.fillText('DATE: ' + (dateStr || '').toUpperCase(), pad + 18, curY + 10);
+            ctx.fillText('SUBJECT: ' + (subject || '').toUpperCase() + '   |   BATCH: ' + (batch || '').toUpperCase(), pad + 18, curY + 28);
+
+            curY += infoH + 14;
+
+            // ── 3. Four Summary Stat Cards ──
+            const gap = 10;
+            const cardW = (contentW - gap * 3) / 4;
+
+            const summaryCards = [
+                { title: 'PRESENT', count: '—', sub: 'Names not provided', bg: '#eafaf1', text: '#15803d', subColor: '#16a34a', countColor: '#15803d' },
+                { title: 'ABSENT', count: String(absentList.length), sub: absentList.length + ' students listed', bg: '#fef2f2', text: '#b91c1c', subColor: '#dc2626', countColor: '#b91c1c' },
+                { title: 'HOMEWORK NOT SUBMITTED', count: String(notDoneList.length), sub: 'Priority follow-up', bg: '#fff7ed', text: '#c2410c', subColor: '#ea580c', countColor: '#c2410c' },
+                { title: 'HOMEWORK SUBMITTED', count: String(doneList.length), sub: doneList.length + ' students listed', bg: '#f0f7ff', text: '#0369a1', subColor: '#0284c7', countColor: '#0369a1' }
+            ];
+
+            summaryCards.forEach((c, idx) => {
+                const cx = pad + idx * (cardW + gap);
+                ctx.fillStyle = c.bg;
+                drawRoundRect(ctx, cx, curY, cardW, statsH, 10);
+                ctx.fill();
+
+                ctx.fillStyle = c.text;
+                ctx.font = '800 9.5px Inter, sans-serif';
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'top';
+                ctx.fillText(c.title, cx + 11, curY + 10);
+
+                ctx.fillStyle = c.countColor;
+                ctx.font = '800 22px Poppins, Inter, sans-serif';
+                ctx.fillText(c.count, cx + 11, curY + 26);
+
+                ctx.fillStyle = c.subColor;
+                ctx.font = '600 8.5px Inter, sans-serif';
+                ctx.fillText(c.sub, cx + 11, curY + 54);
+            });
+
+            curY += statsH + 16;
+
+            // ── 4. Main Section: HW NOT SUBMITTED ──
+            const hwNotTitle = '⚠  HOMEWORK NOT SUBMITTED (' + notDoneList.length + ' STUDENTS)';
+            ctx.fillStyle = '#a83427';
+            drawRoundRect(ctx, pad, curY, contentW, hwNotHeaderH, [10, 10, 0, 0]);
+            ctx.fill();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '800 12.5px Inter, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            ctx.fillText(hwNotTitle, pad + 18, curY + 11);
+
+            ctx.fillStyle = '#fffdfa';
+            drawRoundRect(ctx, pad, curY + hwNotHeaderH, contentW, hwNotBodyH, [0, 0, 10, 10]);
+            ctx.fill();
+            ctx.strokeStyle = '#c2410c';
+            ctx.lineWidth = 1.8;
+            ctx.stroke();
+
+            let rowY = curY + hwNotHeaderH + 12;
+            if (notDoneList.length === 0) {
+                ctx.fillStyle = '#16a34a';
+                ctx.font = '700 11.5px Inter, sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText('All present students have submitted their homework! 🎉', pad + 18, rowY + 2);
+            } else {
+                notDoneList.forEach((s, n) => {
+                    ctx.fillStyle = '#1f2937';
+                    ctx.font = '700 11.5px Inter, sans-serif';
+                    ctx.textAlign = 'left';
+                    ctx.fillText((n + 1) + '.   ' + s.name.toUpperCase(), pad + 18, rowY);
+
+                    ctx.fillStyle = '#4b5563';
+                    ctx.font = '600 11px Inter, sans-serif';
+                    ctx.textAlign = 'right';
+                    ctx.fillText(s.reg_no || '', pad + contentW - 18, rowY);
+                    rowY += rowH;
+                });
+
+                ctx.fillStyle = '#a83427';
+                ctx.font = '800 10.5px Inter, sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText('PARENTS: Please ensure that pending homework is completed and submitted.', pad + 18, rowY + 4);
+            }
+
+            curY += hwNotSectionH + 16;
+
+            // ── 5. Two Columns (Absent vs HW Submitted + Present) ──
+            const col1X = pad;
+            const col2X = pad + colW + 14;
+
+            // Column 1: ABSENT TODAY
+            ctx.fillStyle = '#a83427';
+            drawRoundRect(ctx, col1X, curY, colW, absentHeaderH, [10, 10, 0, 0]);
+            ctx.fill();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '800 12px Inter, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            ctx.fillText('ABSENT TODAY (' + absentList.length + ')', col1X + 14, curY + 11);
+
+            const absentActualBodyH = twoColH - absentHeaderH;
+            ctx.fillStyle = '#ffffff';
+            drawRoundRect(ctx, col1X, curY + absentHeaderH, colW, absentActualBodyH, [0, 0, 10, 10]);
+            ctx.fill();
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            let absY = curY + absentHeaderH + 12;
+            if (absentList.length === 0) {
+                ctx.fillStyle = '#16a34a';
+                ctx.font = '700 11px Inter, sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText('100% Attendance today! No absentees. 🌟', col1X + 14, absY + 2);
+            } else {
+                absentList.forEach((s, n) => {
+                    ctx.fillStyle = '#1f2937';
+                    ctx.font = '700 11px Inter, sans-serif';
+                    ctx.textAlign = 'left';
+
+                    let displayName = (n + 1) + '. ' + s.name;
+                    while (ctx.measureText(displayName).width > (colW - 86) && displayName.length > 5) {
+                        displayName = displayName.slice(0, -2) + '…';
+                    }
+                    ctx.fillText(displayName, col1X + 14, absY);
+
+                    ctx.fillStyle = '#6b7280';
+                    ctx.font = '500 10.5px Inter, sans-serif';
+                    ctx.textAlign = 'right';
+                    ctx.fillText(s.reg_no || '', col1X + colW - 14, absY);
+                    absY += rowH;
+                });
+            }
+
+            // Column 2: HOMEWORK SUBMITTED (TOP)
+            ctx.fillStyle = '#1e5692';
+            drawRoundRect(ctx, col2X, curY, colW, doneHeaderH, [10, 10, 0, 0]);
+            ctx.fill();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '800 12px Inter, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            ctx.fillText('HOMEWORK SUBMITTED (' + doneList.length + ')', col2X + 14, curY + 11);
+
+            ctx.fillStyle = '#ffffff';
+            drawRoundRect(ctx, col2X, curY + doneHeaderH, colW, doneBodyH, [0, 0, 10, 10]);
+            ctx.fill();
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            let subY = curY + doneHeaderH + 12;
+            if (doneList.length === 0) {
+                ctx.fillStyle = '#6b7280';
+                ctx.font = '600 11px Inter, sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText('No submissions recorded yet.', col2X + 14, subY + 2);
+            } else {
+                doneList.forEach((s, n) => {
+                    ctx.fillStyle = '#1f2937';
+                    ctx.font = '700 11px Inter, sans-serif';
+                    ctx.textAlign = 'left';
+                    let displayName = (n + 1) + '. ' + s.name;
+                    while (ctx.measureText(displayName).width > (colW - 86) && displayName.length > 5) {
+                        displayName = displayName.slice(0, -2) + '…';
+                    }
+                    ctx.fillText(displayName, col2X + 14, subY);
+
+                    ctx.fillStyle = '#6b7280';
+                    ctx.font = '500 10.5px Inter, sans-serif';
+                    ctx.textAlign = 'right';
+                    ctx.fillText(s.reg_no || '', col2X + colW - 14, subY);
+                    subY += rowH;
+                });
+            }
+
+            // Column 2: PRESENT TODAY (BOTTOM)
+            const presBoxY = curY + doneSectionH + 14;
+            const presBoxActualH = curY + twoColH - presBoxY;
+
+            ctx.fillStyle = '#f0f5fc';
+            drawRoundRect(ctx, col2X, presBoxY, colW, Math.max(presBoxActualH, presentBoxH), 10);
+            ctx.fill();
+            ctx.strokeStyle = '#d0e1f7';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            ctx.fillStyle = '#15345d';
+            ctx.font = '800 12px Inter, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            ctx.fillText('PRESENT TODAY', col2X + 14, presBoxY + 12);
+
+            ctx.fillStyle = '#1f2937';
+            ctx.font = '700 11px Inter, sans-serif';
+            ctx.fillText('Count: Not available', col2X + 14, presBoxY + 30);
+
+            ctx.fillStyle = '#6b7280';
+            ctx.font = '500 9.5px Inter, sans-serif';
+            ctx.fillText('Present student names were not', col2X + 14, presBoxY + 48);
+            ctx.fillText('included in the supplied report.', col2X + 14, presBoxY + 62);
+            ctx.fillText('Share present list to complete this section.', col2X + 14, presBoxY + 76);
+
+            curY += twoColH + 20;
+
+            // ── 6. Footer ──
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.fillStyle = '#15345d';
+            ctx.font = '800 11px Inter, sans-serif';
+            ctx.fillText('Regular attendance  •  Timely homework  •  Daily revision', W / 2, curY + 6);
+
+            ctx.fillStyle = '#6b7280';
+            ctx.font = '500 9.5px Inter, sans-serif';
+            ctx.fillText('PW ALIPURDUAR VIDYAPEETH  |  Generated: ' + istTimestamp, W / 2, curY + 24);
+
+            return canvas;
+        }
+
+        /* ── GENERATE REPORT (IMAGE + TEXT) ────────────────── */
+        function generateReport() {
+            const dateVal     = document.getElementById('date-inp').value;
+            const subject     = document.getElementById('subject-sel').value;
+            const batch       = document.getElementById('batch-sel').value;
+            const dateStrFmt  = fmtDate(dateVal);
+            const dateUpper   = fmtDateUpper(dateVal);
+
+            const absentList  = batchStudents.filter((_, i) => cardStates[i] === S_ABSENT);
+            const notDoneList = batchStudents.filter((_, i) => cardStates[i] === S_NOT_DONE);
+            const doneList    = batchStudents.filter((_, i) => cardStates[i] === S_DONE);
+            const presentCount = batchStudents.length - absentList.length;
+
+            // Indian Standard Time (IST) timestamp
+            const rawTimestamp = new Date().toLocaleString('en-IN', {
+                timeZone: 'Asia/Kolkata',
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            });
+            const istTimestamp = rawTimestamp.replace(/\bam\b/i, 'AM').replace(/\bpm\b/i, 'PM');
+
+            // 1. Build text message for the text tab
+            buildTextMessage(dateStrFmt, subject, batch, absentList, notDoneList, doneList, istTimestamp);
+
+            // 2. Render visual report image onto canvas
+            try {
+                reportCanvas = drawReportCanvas({
+                    dateStr: dateUpper,
+                    subject,
+                    batch,
+                    absentList,
+                    notDoneList,
+                    doneList,
+                    presentCount,
+                    totalStudents: batchStudents.length,
+                    istTimestamp
+                });
+
+                const imgDataUrl = reportCanvas.toDataURL('image/png');
+                document.getElementById('report-image-wrap').innerHTML =
+                    '<img src="' + imgDataUrl + '" alt="Homework & Attendance Report" id="preview-report-img">';
+            } catch (err) {
+                console.error('Error drawing report canvas:', err);
+                document.getElementById('report-image-wrap').innerHTML =
+                    '<div class="report-image-placeholder">⚠️ Could not generate image. Use the Text Message tab instead.</div>';
+            }
+
+            // 3. Open modal on Image Report tab
+            switchReportTab('image');
+            openOverlay('msg-overlay');
+        }
+
+        // Backward-compatible alias
+        function generateMessage() {
+            generateReport();
+        }
+
+        /* ── BUILD TEXT MESSAGE (for text tab) ────────────── */
+        function buildTextMessage(dateStr, subject, batch, absentList, notDoneList, doneList, istTimestamp) {
+            const DIV = '\u2501'.repeat(26);
+            const numList = (arr) => arr.map((s, n) =>
+                '  ' + (n + 1) + '. *' + s.name + '*' + (s.reg_no ? ' (' + s.reg_no + ')' : '')).join('\n');
+
+            let msg = '';
+            msg += '\uD83C\uDFEB *PW Alipurduar Vidyapeeth*\n';
+            msg += DIV + '\n';
+            msg += '\uD83D\uDCC5 *Date:* ' + dateStr + '\n';
+            msg += '\uD83D\uDCDA *Subject:* ' + subject + '\n';
+            msg += '\uD83C\uDFF7\uFE0F *Batch:* ' + batch + '\n';
+            msg += DIV + '\n\n';
+            msg += '\uD83D\uDE4F *Dear Parents & Guardians,*\n\n';
+            msg += 'Greetings from *PW Alipurduar Vidyapeeth*! Please find today\'s Homework & Attendance report below.\n\n';
+
+            if (absentList.length > 0) {
+                msg += '\uD83D\uDEAB *ABSENT TODAY (' + absentList.length + ' student' + (absentList.length > 1 ? 's' : '') + '):*\n';
+                msg += numList(absentList) + '\n\n';
+            }
+            if (notDoneList.length > 0) {
+                msg += '\u26A0\uFE0F *HOMEWORK NOT SUBMITTED (' + notDoneList.length + ' student' + (notDoneList.length > 1 ? 's' : '') + '):*\n';
+                msg += numList(notDoneList) + '\n\n';
+            }
+            if (doneList.length > 0) {
+                msg += '\u2705 *HOMEWORK SUBMITTED (' + doneList.length + ' student' + (doneList.length > 1 ? 's' : '') + '):*\n';
+                msg += numList(doneList) + '\n\n';
+            }
+
+            msg += DIV + '\n';
+            msg += '\uD83D\uDCCC *Gentle Reminders:*\n';
+            msg += '  \u2022 Please ensure your ward completes all homework assignments regularly.\n';
+            msg += '  \u2022 Regular attendance is essential for strong concept mastery.\n';
+            msg += '  \u2022 Encourage daily revision of class notes.\n\n';
+            msg += 'For any queries or academic guidance, please feel free to reach out.\n\n';
+            msg += '\uD83C\uDF1F *Together, we nurture brighter futures!*\n\n';
+            msg += DIV + '\n';
+            msg += '\u2014 *PW Alipurduar Vidyapeeth* \uD83C\uDFEB\n';
+            msg += '\uD83D\uDD52 Generated: ' + istTimestamp + ' (IST)';
+
+            document.getElementById('msg-box').textContent = msg;
+        }
+
+        /* ── COPY IMAGE TO CLIPBOARD (for WhatsApp paste) ─── */
+        async function copyImage() {
+            if (!reportCanvas) {
+                toast('No report generated yet!', 'err');
+                return;
+            }
+            const btn = document.getElementById('copy-img-btn');
+            const origHtml = btn ? btn.innerHTML : '';
+            try {
+                const blob = await new Promise((resolve, reject) => {
+                    reportCanvas.toBlob(b => b ? resolve(b) : reject(new Error('Canvas toBlob failed')), 'image/png');
+                });
+                if (navigator.clipboard && window.ClipboardItem && navigator.clipboard.write) {
+                    await navigator.clipboard.write([
+                        new ClipboardItem({ 'image/png': blob })
+                    ]);
+                    if (btn) {
+                        btn.innerHTML = '✅ Image Copied!';
+                        setTimeout(() => { btn.innerHTML = origHtml; }, 2500);
+                    }
+                    toast('Image copied to clipboard! Paste directly in WhatsApp ✅');
+                } else {
+                    throw new Error('ClipboardItem write not supported');
+                }
+            } catch (err) {
+                console.warn('Clipboard write failed, downloading image instead:', err);
+                downloadImage();
+                toast('Clipboard not supported on this device — Image downloaded! 📥');
+            }
+        }
+
+        /* ── DOWNLOAD IMAGE AS PNG ────────────────────────── */
+        function downloadImage() {
+            if (!reportCanvas) {
+                toast('No report generated yet!', 'err');
+                return;
+            }
+            const batch   = document.getElementById('batch-sel').value || 'Batch';
+            const subject = document.getElementById('subject-sel').value || 'Subject';
+            const dateVal = document.getElementById('date-inp').value || 'Date';
+            const fileName = 'PW_Report_' + batch.replace(/[^a-zA-Z0-9_\-]/g,'_') + '_' + subject + '_' + dateVal + '.png';
+
+            const link = document.createElement('a');
+            link.download = fileName;
+            link.href = reportCanvas.toDataURL('image/png');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            toast('Report image downloaded! 📥');
+        }
+
+        /* ── COPY TEXT MESSAGE TO CLIPBOARD ────────────────── */
+        async function copyMsg() {
+            const text = document.getElementById('msg-box').textContent;
+            try {
+                await navigator.clipboard.writeText(text);
+            } catch {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.cssText = 'position:fixed;opacity:0';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+            }
+            const btn = document.getElementById('copy-btn');
+            const orig = btn.textContent;
+            btn.textContent = '\u2705 Copied!';
+            setTimeout(() => { btn.textContent = orig; }, 2500);
+            toast('Message copied to clipboard! \u2705');
+        }
+
+        function openForm() { 
+            window.open(GOOGLE_FORM_URL, '_blank', 'noopener,noreferrer'); 
+        }
+
+        /* ── MODAL UTILS ───────────────────────────────────── */
+        function openOverlay(id)  { document.getElementById(id).classList.add('open'); }
+        function closeOverlay(id) { document.getElementById(id).classList.remove('open'); }
+
+        /* ── TOAST MESSAGES ────────────────────────────────── */
+        let toastTmr;
+        function toast(msg, type) {
+            type = type || 'ok';
+            const el = document.getElementById('toast');
+            document.getElementById('toast-icon').textContent = type === 'err' ? '\u26A0\uFE0F' : '\u2705';
+            document.getElementById('toast-msg').textContent  = msg;
+            el.style.borderColor = type === 'err' ? '#F59E0B' : 'var(--success)';
+            el.style.color       = type === 'err' ? '#FBBF24' : 'var(--success)';
+            el.classList.add('show');
+            clearTimeout(toastTmr);
+            toastTmr = setTimeout(() => el.classList.remove('show'), 3200);
+        }
+
+        /* ── UTILITY FUNCTIONS ─────────────────────────────── */
+        function pad(n)    { return String(n).padStart(2, '0'); }
+        function fmtDate(v) {
+            if (!v) return '\u2014';
+            const d = new Date(v + 'T00:00:00');
+            return pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear();
+        }
+        function esc(s) {
+            return String(s)
+                .replace(/&/g,'&amp;')
+                .replace(/</g,'&lt;')
+                .replace(/>/g,'&gt;')
+                .replace(/"/g,'&quot;');
+        }
+    </script>
+</body>
+</html>
