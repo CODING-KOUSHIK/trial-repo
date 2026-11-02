@@ -1576,6 +1576,12 @@
 
         /* ── ROUNDED RECTANGLE HELPER (Universal Support) ──── */
         function drawRoundRect(ctx, x, y, w, h, r) {
+            if (ctx.roundRect) {
+                ctx.beginPath();
+                ctx.roundRect(x, y, w, h, r);
+                ctx.closePath();
+                return;
+            }
             if (typeof r === 'number') r = [r, r, r, r];
             const [tl, tr, br, bl] = r;
             ctx.beginPath();
@@ -1586,8 +1592,8 @@
             ctx.quadraticCurveTo(x + w, y + h, x + w - br, y + h);
             ctx.lineTo(x + bl, y + h);
             ctx.quadraticCurveTo(x, y + h, x, y + h - bl);
-            ctx.lineTo(x + tl);
-            ctx.quadraticCurveTo(x, y + tl, y);
+            ctx.lineTo(x, y + tl);
+            ctx.quadraticCurveTo(x, y, x + tl, y);
             ctx.closePath();
         }
 
@@ -2032,7 +2038,11 @@
 
             try {
                 if (document.fonts && document.fonts.ready) {
-                    await document.fonts.ready;
+                    try {
+                        await document.fonts.ready;
+                    } catch (fErr) {
+                        console.warn('Font loading check timed out or failed, continuing:', fErr);
+                    }
                 }
 
                 reportCanvas = drawReportCanvas({
@@ -2047,16 +2057,21 @@
                     istTimestamp
                 });
 
-                // Pre-build lossless PNG blob immediately
-                reportBlob = await new Promise((resolve, reject) => {
-                    reportCanvas.toBlob(b => b ? resolve(b) : reject(new Error('toBlob failed')), 'image/png', 1.0);
-                });
+                // Pre-build lossless PNG blob immediately with dataURL fallback
+                try {
+                    reportBlob = await new Promise((resolve) => {
+                        reportCanvas.toBlob((b) => resolve(b), 'image/png');
+                    });
+                } catch (bErr) {
+                    console.warn('toBlob error, using fallback:', bErr);
+                    reportBlob = null;
+                }
 
-                const blobUrl = URL.createObjectURL(reportBlob);
+                const imgSrc = reportBlob ? URL.createObjectURL(reportBlob) : reportCanvas.toDataURL('image/png');
                 wrap.innerHTML = '';
                 const img = document.createElement('img');
                 img.id = 'preview-report-img';
-                img.src = blobUrl;
+                img.src = imgSrc;
                 img.alt = 'PW Homework & Attendance Report';
                 img.loading = 'eager';
                 wrap.appendChild(img);
