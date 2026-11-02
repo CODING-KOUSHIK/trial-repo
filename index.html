@@ -985,21 +985,12 @@
             </div>
             <div class="report-tab-content active" id="tab-content-image">
                 <div class="report-actions-row">
-                    <button class="btn-fill report-btn-copy" onclick="copyImage()" type="button" id="copy-img-btn">
+                    <button class="btn-fill report-btn-copy" onclick="copyImage()" type="button" id="copy-img-btn" style="flex:1">
                         📋 Copy HD Image
-                    </button>
-                    <button class="btn-outline" onclick="shareImageWhatsApp()" type="button" id="share-img-btn" style="flex:1;border-color:#10B981;color:#10B981;background:rgba(16,185,129,0.12)">
-                        📲 Share to WhatsApp
-                    </button>
-                    <button class="btn-outline" onclick="downloadImage()" type="button" id="dl-img-btn" style="flex:1">
-                        ⬇️ Download PNG
-                    </button>
-                    <button class="btn-outline" onclick="openForm()" type="button" style="flex:1">
-                        📝 Google Form
                     </button>
                 </div>
                 <div class="copy-help-hint">
-                    💡 <strong>Tip for Teachers:</strong> Tap <b>Copy Image</b> to paste (<kbd>Ctrl+V</kbd>) directly into WhatsApp. On phones, tap <b>Download</b> or long-press the image to share!
+                    💡 <strong>Tip for Teachers:</strong> Tap <b>Copy HD Image</b>, then go to WhatsApp and press <b>Ctrl+V</b> (or paste) to instantly share!
                 </div>
                 <div class="report-image-wrap" id="report-image-wrap">
                     <div class="report-image-placeholder">⏳ Generating visual report...</div>
@@ -1570,11 +1561,16 @@
             document.getElementById('tab-content-text').classList.toggle('active', !isImg);
         }
 
-        /* ── CANVAS REFERENCE FOR IMAGE EXPORT ────────────── */
-        let reportCanvas = null;
-        let reportBlob = null;
+        /* ── PW LOGO BASE64 EMBEDDED (Upper Left) ─────────── */
+        const PW_LOGO_DATA_URL = "data:image/png;base64,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";
+        const pwLogoImg = new Image();
+        pwLogoImg.src = PW_LOGO_DATA_URL;
 
-        /* ── ROUNDED RECTANGLE HELPER (Universal Support) ──── */
+        /* ── CANVAS & BLOB REFERENCES FOR EXPORT ───── */
+        let reportCanvas = null;
+        let reportBlob   = null;
+
+        /* ── ROUNDED RECTANGLE HELPER ──────────────────────── */
         function drawRoundRect(ctx, x, y, w, h, r) {
             if (ctx.roundRect) {
                 ctx.beginPath();
@@ -1599,60 +1595,67 @@
 
         /* ── DATE FORMATTER FOR UPPERCASE HEADER ───────────── */
         function fmtDateUpper(v) {
-            if (!v) return '';
+            if (!v) return '—';
             const months = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
             const m = String(v).trim().match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);
             if (m) {
                 const day = String(parseInt(m[1], 10)).padStart(2, '0');
                 const monIdx = parseInt(m[2], 10) - 1;
                 const year = m[3];
-                if (monIdx >= 0 && monIdx < 12) {
-                    return `${day} ${months[monIdx]} ${year}`;
-                }
+                if (monIdx >= 0 && monIdx < 12) return day + ' ' + months[monIdx] + ' ' + year;
+            }
+            const d = new Date(v + 'T00:00:00');
+            if (!isNaN(d.getTime())) {
+                const day = String(d.getDate()).padStart(2, '0');
+                const month = d.toLocaleDateString('en-US', { month: 'long' }).toUpperCase();
+                const year = d.getFullYear();
+                return day + ' ' + month + ' ' + year;
             }
             return String(v).toUpperCase();
         }
 
-        /* ── SMART NAME FITTER (NO TRUNCATION ELLIPSIS) ────── */
+        /* ── SMART FITTING (Truncate Initials if Name Too Long) ── */
         function fitStudentName(ctx, num, rawName, maxW) {
             const clean = String(rawName || '').trim().toUpperCase().replace(/\s+/g, ' ');
             let full = num + '. ' + clean;
             if (ctx.measureText(full).width <= maxW) return full;
 
-            // Strategy: First Name + Last Initial
             const parts = clean.split(' ').filter(Boolean);
             if (parts.length >= 2) {
-                const shortName = num + '. ' + parts[0] + ' ' + parts[parts.length - 1][0] + '.';
-                if (ctx.measureText(shortName).width <= maxW) return shortName;
+                const firstLastInit = num + '. ' + parts[0] + ' ' + parts[parts.length - 1][0] + '.';
+                if (ctx.measureText(firstLastInit).width <= maxW) return firstLastInit;
             }
 
-            // Fallback: truncate cleanly if name is exceptionally long
-            while (full.length > 3 && ctx.measureText(full + '…').width > maxW) {
+            while (ctx.measureText(full + '…').width > maxW && full.length > 5) {
                 full = full.slice(0, -1);
             }
             return full + '…';
         }
 
-        /* ── DRAW REPORT CANVAS (Native 1600x1600 WhatsApp HD) ── */
+        /* ── NATIVE 1600x1600 WHATSAPP HD REPORT GENERATOR ─── */
         function drawReportCanvas(data) {
             const { dateStr, subject, batch, absentList, notDoneList, doneList, presentCount, istTimestamp } = data;
 
+            // 1600x1600 Native resolution to completely bypass lossy downscaling on WhatsApp
             const SIZE = 1600;
-            const pad = 36;
+            const pad  = 36;
             const contentW = SIZE - pad * 2; // 1528px
 
             const canvas = document.createElement('canvas');
-            canvas.width = SIZE;
+            canvas.width  = SIZE;
             canvas.height = SIZE;
             const ctx = canvas.getContext('2d', { alpha: false });
 
-            // 0. Base Background
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+
+            // Clean background fill
             ctx.fillStyle = '#EEF2F6';
             ctx.fillRect(0, 0, SIZE, SIZE);
 
             let curY = pad;
 
-            /* ── SECTION 1: TOP HEADER CARD (H: 152) ── */
+            // ── Header Card ──
             const headerH = 152;
             ctx.save();
             ctx.shadowColor = 'rgba(15, 23, 42, 0.06)';
@@ -1668,205 +1671,174 @@
             drawRoundRect(ctx, pad, curY, contentW, headerH, 20);
             ctx.stroke();
 
-            // PW Circle Monogram
-            const logoX = pad + 68;
-            const logoY = curY + 76;
-            const logoR = 44;
-            ctx.beginPath();
-            ctx.arc(logoX, logoY, logoR, 0, Math.PI * 2);
-            ctx.fillStyle = '#0F172A';
-            ctx.fill();
+            // Upper Left Logo (Official Graphic + Vector Fallback)
+            if (typeof pwLogoImg !== 'undefined' && pwLogoImg && pwLogoImg.complete && pwLogoImg.naturalWidth > 0) {
+                const logoH = 92;
+                const logoW = Math.round(logoH * (pwLogoImg.naturalWidth / pwLogoImg.naturalHeight));
+                const logoX = pad + 24;
+                const logoY = curY + Math.round((headerH - logoH) / 2);
+                ctx.drawImage(pwLogoImg, logoX, logoY, logoW, logoH);
+            } else {
+                // Vector Fallback Monogram
+                const logoX = pad + 68;
+                const logoY = curY + headerH / 2;
+                const logoR = 44;
 
+                ctx.fillStyle = '#0F172A';
+                ctx.beginPath();
+                ctx.arc(logoX, logoY, logoR, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = '#FFFFFF';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.font = 'bold 34px Georgia, serif';
+                ctx.fillText('P', logoX - 7, logoY - 12);
+                ctx.font = 'bold 30px Georgia, serif';
+                ctx.fillText('W', logoX + 7, logoY + 14);
+
+                const textX = logoX + logoR + 24;
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'top';
+                ctx.fillStyle = '#0F172A';
+                ctx.font = '900 32px Poppins, Inter, sans-serif';
+                ctx.fillText('VIDYAPEETH', textX, curY + 38);
+                ctx.font = '700 14px Inter, sans-serif';
+                ctx.fillStyle = '#E11D48';
+                ctx.fillText('IIT-JEE | NEET | FOUNDATION', textX, curY + 80);
+            }
+
+            // Centered Main Titles
+            const centerTitleX = SIZE / 2;
             ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillStyle = '#FFFFFF';
-            ctx.font = 'bold 34px Georgia, serif';
-            ctx.fillText('P', logoX - 11, logoY - 4);
-            ctx.font = 'bold 30px Georgia, serif';
-            ctx.fillText('W', logoX + 11, logoY + 4);
-
-            // Left Header Titles
-            const textX = logoX + logoR + 28;
-            ctx.textAlign = 'left';
             ctx.textBaseline = 'top';
 
-            ctx.font = '900 44px Poppins, Inter, sans-serif';
             ctx.fillStyle = '#0F172A';
-            ctx.fillText('VIDYAPEETH', textX, curY + 20);
+            ctx.font = '900 42px Poppins, Inter, sans-serif';
+            ctx.fillText('PW ALIPURDUAR VIDYAPEETH', centerTitleX, curY + 24);
 
-            ctx.font = '800 19px Inter, sans-serif';
-            ctx.fillStyle = '#E11D48';
-            ctx.fillText('IIT-JEE', textX, curY + 74);
-            const w1 = ctx.measureText('IIT-JEE').width;
-
-            ctx.fillStyle = '#94A3B8';
-            ctx.fillText(' | ', textX + w1, curY + 74);
-            const w2 = ctx.measureText(' | ').width;
-
-            ctx.fillStyle = '#0F766E';
-            ctx.fillText('NEET', textX + w1 + w2, curY + 74);
-            const w3 = ctx.measureText('NEET').width;
-
-            ctx.fillStyle = '#94A3B8';
-            ctx.fillText(' | ', textX + w1 + w2 + w3, curY + 74);
-            const w4 = ctx.measureText(' | ').width;
-
-            ctx.fillStyle = '#E11D48';
-            ctx.fillText('FOUNDATION', textX + w1 + w2 + w3 + w4, curY + 74);
-
-            ctx.font = '900 19px Inter, sans-serif';
             ctx.fillStyle = '#1E3A8A';
-            ctx.fillText('HOMEWORK & ATTENDANCE REPORT', textX, curY + 106);
+            ctx.font = '900 24px Inter, sans-serif';
+            ctx.fillText('HOMEWORK & ATTENDANCE REPORT', centerTitleX, curY + 82);
 
-            // Right Header Info
+            // Top-Right Date Block
             ctx.textAlign = 'right';
             ctx.textBaseline = 'top';
-            ctx.font = '800 20px Poppins, Inter, sans-serif';
-            ctx.fillStyle = '#EA580C';
-            ctx.fillText('PW ALIPURDUAR CENTER', pad + contentW - 28, curY + 30);
-
-            ctx.font = '700 16px Inter, sans-serif';
+            ctx.fillStyle = '#0F172A';
+            ctx.font = '900 24px Poppins, Inter, sans-serif';
+            ctx.fillText('DATE: ' + (dateStr || '').toUpperCase(), pad + contentW - 28, curY + 30);
             ctx.fillStyle = '#475569';
+            ctx.font = '700 16px Inter, sans-serif';
             ctx.fillText('Daily Academic Tracker', pad + contentW - 28, curY + 60);
 
             curY += headerH + 16;
 
-            /* ── SECTION 2: NAVY INFO BAR (H: 62) ── */
+            // ── Info Bar (Batch shifted Left, Subject on the Right) ──
             const infoH = 62;
             ctx.fillStyle = '#1E3A8A';
             drawRoundRect(ctx, pad, curY, contentW, infoH, 14);
             ctx.fill();
 
-            ctx.textAlign = 'left';
-            ctx.textBaseline = 'middle';
-            ctx.font = '800 21px Inter, sans-serif';
             ctx.fillStyle = '#FFFFFF';
-            const infoStr = 'DATE: ' + (dateStr || '').toUpperCase() + '     |     BATCH: ' + (batch || '').toUpperCase() + '     |     SUBJECT: ' + (subject || '').toUpperCase();
-            ctx.fillText(infoStr, pad + 28, curY + infoH / 2);
+            ctx.font = '800 21px Inter, sans-serif';
+            ctx.textBaseline = 'middle';
+            ctx.textAlign = 'left';
+            ctx.fillText('BATCH: ' + (batch || '').toUpperCase(), pad + 28, curY + infoH / 2);
+
+            ctx.textAlign = 'right';
+            ctx.fillText('SUBJECT: ' + (subject || '').toUpperCase(), pad + contentW - 28, curY + infoH / 2);
 
             curY += infoH + 16;
 
-            /* ── SECTION 3: FOUR SUMMARY STAT CARDS (H: 116) ── */
+            // ── Summary Stat Cards Row ──
             const statsH = 116;
             const gap = 16;
             const statW = (contentW - gap * 3) / 4;
 
-            const statCards = [
-                {
-                    title: 'PRESENT',
-                    count: String(presentCount),
-                    sub: presentCount + ' present today',
-                    bg: '#ECFDF5',
-                    border: '#6EE7B7',
-                    text: '#047857'
-                },
-                {
-                    title: 'ABSENT',
-                    count: String(absentList.length),
-                    sub: absentList.length === 0 ? '100% Attendance' : absentList.length + ' students absent',
-                    bg: '#FEF2F2',
-                    border: '#FCA5A5',
-                    text: '#B91C1C'
-                },
-                {
-                    title: 'HW NOT SUBMITTED',
-                    count: String(notDoneList.length),
-                    sub: notDoneList.length === 0 ? 'All Submitted' : 'Priority follow-up',
-                    bg: '#FFFBEB',
-                    border: '#FCD34D',
-                    text: '#B45309'
-                },
-                {
-                    title: 'HW SUBMITTED',
-                    count: String(doneList.length),
-                    sub: doneList.length + ' students submitted',
-                    bg: '#EFF6FF',
-                    border: '#93C5FD',
-                    text: '#1D4ED8'
-                }
+            const statItems = [
+                { title: 'PRESENT',          count: String(presentCount),       sub: presentCount + ' present today',                                      bg: '#ECFDF5', border: '#6EE7B7', text: '#047857' },
+                { title: 'ABSENT',           count: String(absentList.length),  sub: absentList.length === 0 ? '100% Attendance' : absentList.length + ' absent today', bg: '#FEF2F2', border: '#FCA5A5', text: '#B91C1C' },
+                { title: 'HW NOT SUBMITTED', count: String(notDoneList.length), sub: notDoneList.length === 0 ? 'All Submitted' : 'Priority follow-up',    bg: '#FFFBEB', border: '#FCD34D', text: '#B45309' },
+                { title: 'HW SUBMITTED',     count: String(doneList.length),    sub: doneList.length + ' submitted',                                       bg: '#EFF6FF', border: '#93C5FD', text: '#1D4ED8' }
             ];
 
-            for (let i = 0; i < statCards.length; i++) {
-                const sc = statCards[i];
+            statItems.forEach((st, i) => {
                 const sx = pad + i * (statW + gap);
-
-                ctx.fillStyle = sc.bg;
+                ctx.fillStyle = st.bg;
                 drawRoundRect(ctx, sx, curY, statW, statsH, 16);
                 ctx.fill();
-
-                ctx.strokeStyle = sc.border;
+                ctx.strokeStyle = st.border;
                 ctx.lineWidth = 2;
                 drawRoundRect(ctx, sx, curY, statW, statsH, 16);
                 ctx.stroke();
 
+                ctx.fillStyle = st.text;
                 ctx.textAlign = 'left';
                 ctx.textBaseline = 'top';
-
                 ctx.font = '900 16px Inter, sans-serif';
-                ctx.fillStyle = sc.text;
-                ctx.fillText(sc.title, sx + 22, curY + 14);
+                ctx.fillText(st.title, sx + 22, curY + 14);
 
                 ctx.font = '900 44px Poppins, Inter, sans-serif';
-                ctx.fillStyle = sc.text;
-                ctx.fillText(sc.count, sx + 22, curY + 36);
+                ctx.fillText(st.count, sx + 22, curY + 36);
 
                 ctx.font = '700 15px Inter, sans-serif';
-                ctx.fillStyle = sc.text;
-                ctx.fillText(sc.sub, sx + 22, curY + 86);
-            }
+                ctx.fillText(st.sub, sx + 22, curY + 86);
+            });
 
             curY += statsH + 20;
 
-            /* ── SECTION 4: DYNAMIC STUDENT PANELS (ZERO OVERLAP) ── */
+            // ── Dynamic Body Grid with Category Color Identification ──
             const footerH = 60;
             const footerY = SIZE - pad - footerH;
-            const bodyY = curY;
-            const bodyH = footerY - 16 - bodyY;
+            const bodyY   = curY;
+            const bodyH   = footerY - 16 - bodyY;
 
             function renderPanel(box, cfg) {
                 const { x, y, w, h } = box;
+                const { title, badge, students, headerBg, borderColor, bodyBg, footerNote, noteColor } = cfg;
                 const headH = 54;
-                const hasNote = Boolean(cfg.footerNote);
+                const hasNote = Boolean(footerNote);
                 const noteH = hasNote ? 42 : 12;
 
-                // Card body
-                ctx.fillStyle = cfg.bodyBg || '#FFFFFF';
+                ctx.save();
+                ctx.fillStyle = bodyBg || '#FFFFFF';
                 drawRoundRect(ctx, x, y, w, h, 16);
                 ctx.fill();
+                ctx.restore();
 
-                // Top header bar
-                ctx.fillStyle = cfg.headerBg;
+                ctx.fillStyle = headerBg;
                 drawRoundRect(ctx, x, y, w, headH, [16, 16, 0, 0]);
                 ctx.fill();
 
-                // Outer border
-                ctx.strokeStyle = cfg.borderColor;
+                ctx.strokeStyle = borderColor;
                 ctx.lineWidth = 2.5;
                 drawRoundRect(ctx, x, y, w, h, 16);
                 ctx.stroke();
 
-                // Header text
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = '900 21px Inter, sans-serif';
                 ctx.textAlign = 'left';
                 ctx.textBaseline = 'middle';
-                ctx.font = '900 21px Inter, sans-serif';
-                ctx.fillStyle = '#FFFFFF';
-                ctx.fillText(cfg.badge + '  ' + cfg.title + ' (' + cfg.students.length + ')', x + 24, y + headH / 2);
+                ctx.fillText(badge + '  ' + title + ' (' + students.length + ')', x + 24, y + headH / 2);
 
-                // Student list area
-                const listTop = y + headH + 14;
+                const listTop    = y + headH + 14;
                 const listBottom = y + h - noteH - 6;
-                const listH = Math.max(40, listBottom - listTop);
-                const listW = w - 44;
+                const listH      = Math.max(40, listBottom - listTop);
+                const listW      = w - 44;
 
                 let cols = 1;
                 if (w >= 1200) {
-                    cols = cfg.students.length <= 6 ? 2 : (cfg.students.length <= 18 ? 3 : 4);
+                    if (students.length <= 6) cols = 2;
+                    else if (students.length <= 18) cols = 3;
+                    else cols = 4;
                 } else {
-                    cols = cfg.students.length <= 7 ? 1 : 2;
+                    if (students.length <= 7) cols = 1;
+                    else cols = 2;
                 }
 
-                const rows = Math.max(1, Math.ceil(cfg.students.length / cols));
-                const rowH = Math.min(48, Math.max(24, Math.floor(listH / rows)));
+                const rows = Math.max(1, Math.ceil(students.length / cols));
+                const rawRowH = Math.floor(listH / rows);
+                const rowH = Math.min(48, Math.max(24, rawRowH));
                 const fontSize = Math.min(24, Math.max(16, Math.floor(rowH * 0.58)));
                 const colW = Math.floor(listW / cols);
 
@@ -1875,16 +1847,16 @@
                 ctx.textAlign = 'left';
                 ctx.textBaseline = 'middle';
 
-                for (let i = 0; i < cfg.students.length; i++) {
-                    const c = i % cols;
-                    const r = Math.floor(i / cols);
-                    const itemX = x + 22 + c * colW;
-                    const itemY = listTop + r * rowH + rowH / 2;
-                    const label = fitStudentName(ctx, i + 1, cfg.students[i].name, colW - 18);
-                    ctx.fillText(label, itemX, itemY);
-                }
+                students.forEach((s, idx) => {
+                    const c = Math.floor(idx / rows);
+                    const r = idx % rows;
+                    const px = x + 22 + c * colW;
+                    const py = listTop + r * rowH + rowH / 2;
 
-                // Footer note
+                    const label = fitStudentName(ctx, idx + 1, s.name, colW - 18);
+                    ctx.fillText(label, px, py);
+                });
+
                 if (hasNote) {
                     ctx.strokeStyle = '#E2E8F0';
                     ctx.lineWidth = 1.5;
@@ -1893,22 +1865,22 @@
                     ctx.lineTo(x + w - 20, y + h - noteH);
                     ctx.stroke();
 
+                    ctx.fillStyle = noteColor || '#475569';
                     ctx.font = '800 16px Inter, sans-serif';
-                    ctx.fillStyle = cfg.noteColor;
                     ctx.textAlign = 'left';
                     ctx.textBaseline = 'middle';
-                    ctx.fillText(cfg.footerNote, x + 24, y + h - noteH / 2);
+                    ctx.fillText(footerNote, x + 24, y + h - noteH / 2);
                 }
             }
 
-            const panels = {
+            const configs = {
                 notDone: {
                     title: 'HOMEWORK NOT SUBMITTED',
                     badge: '⚠️',
                     students: notDoneList,
                     headerBg: '#B45309',
                     borderColor: '#F59E0B',
-                    bodyBg: '#FFFDF9',
+                    bodyBg: '#FFFDF9', // soft pastel cream
                     footerNote: 'PARENTS: Please ensure that pending homework is completed and submitted.',
                     noteColor: '#B45309'
                 },
@@ -1918,7 +1890,7 @@
                     students: absentList,
                     headerBg: '#991B1B',
                     borderColor: '#F87171',
-                    bodyBg: '#FFFFFF',
+                    bodyBg: '#FFF1F2', // soft pastel pink
                     footerNote: 'Please contact PW Alipurduar Vidyapeeth desk regarding absence.',
                     noteColor: '#991B1B'
                 },
@@ -1928,48 +1900,58 @@
                     students: doneList,
                     headerBg: '#1E40AF',
                     borderColor: '#60A5FA',
-                    bodyBg: '#FFFFFF',
+                    bodyBg: '#F0F7FF', // soft pastel sky blue
                     footerNote: '🌟 Appreciated for regular and timely homework submission!',
                     noteColor: '#1E40AF'
                 }
             };
 
-            const boxGap = 20;
             const active = [];
             if (notDoneList.length > 0) active.push('notDone');
-            if (absentList.length > 0) active.push('absent');
-            if (doneList.length > 0) active.push('done');
+            if (absentList.length > 0)  active.push('absent');
+            if (doneList.length > 0)    active.push('done');
 
-            if (active.length === 3) {
-                // Top row: notDone (left) and absent (right) side by side
-                const leftW = Math.floor((contentW - boxGap) / 2);
-                const rightW = contentW - boxGap - leftW;
-                const maxTopRows = Math.max(Math.ceil(notDoneList.length / 2), Math.ceil(absentList.length / 2));
+            // Find key with maximum student count to drop to the bottom span
+            let maxKey = null;
+            let maxCount = -1;
+            active.forEach(k => {
+                if (configs[k].students.length > maxCount) {
+                    maxCount = configs[k].students.length;
+                    maxKey = k;
+                }
+            });
+
+            const topKeys = active.filter(k => k !== maxKey);
+            const boxGap = 20;
+
+            if (topKeys.length === 2 && maxKey) {
+                // All 3 lists populate: Two top cards and the largest spanning across the bottom
+                const maxTopRows = Math.max(Math.ceil(configs[topKeys[0]].students.length / 2), Math.ceil(configs[topKeys[1]].students.length / 2));
                 const topH = Math.min(Math.floor(bodyH * 0.48), Math.max(300, 110 + maxTopRows * 42));
                 const btmH = bodyH - topH - boxGap;
+                const halfW = Math.floor((contentW - boxGap) / 2);
 
-                renderPanel({ x: pad, y: bodyY, w: leftW, h: topH }, panels.notDone);
-                renderPanel({ x: pad + leftW + boxGap, y: bodyY, w: rightW, h: topH }, panels.absent);
-                renderPanel({ x: pad, y: bodyY + topH + boxGap, w: contentW, h: btmH }, panels.done);
+                renderPanel({ x: pad, y: bodyY, w: halfW, h: topH }, configs[topKeys[0]]);
+                renderPanel({ x: pad + halfW + boxGap, y: bodyY, w: halfW, h: topH }, configs[topKeys[1]]);
+                renderPanel({ x: pad, y: bodyY + topH + boxGap, w: contentW, h: btmH }, configs[maxKey]);
             } else if (active.length === 2) {
-                const k1 = active[0];
-                const k2 = active[1];
-                const r1 = Math.max(1, Math.ceil(panels[k1].students.length / 3));
-                const r2 = Math.max(1, Math.ceil(panels[k2].students.length / 3));
+                // Two Lists: Vertical stack with maximum width for name comfort
+                const [k1, k2] = active;
+                const r1 = Math.max(2, Math.ceil(configs[k1].students.length / 3));
+                const r2 = Math.max(2, Math.ceil(configs[k2].students.length / 3));
                 const ratio = Math.min(0.65, Math.max(0.35, r1 / (r1 + r2)));
                 const h1 = Math.floor((bodyH - boxGap) * ratio);
-                const h2 = bodyH - boxGap - h1;
+                const h2 = bodyH - h1 - boxGap;
 
-                renderPanel({ x: pad, y: bodyY, w: contentW, h: h1 }, panels[k1]);
-                renderPanel({ x: pad, y: bodyY + h1 + boxGap, w: contentW, h: h2 }, panels[k2]);
+                renderPanel({ x: pad, y: bodyY, w: contentW, h: h1 }, configs[k1]);
+                renderPanel({ x: pad, y: bodyY + h1 + boxGap, w: contentW, h: h2 }, configs[k2]);
             } else if (active.length === 1) {
-                renderPanel({ x: pad, y: bodyY, w: contentW, h: bodyH }, panels[active[0]]);
+                renderPanel({ x: pad, y: bodyY, w: contentW, h: bodyH }, configs[active[0]]);
             } else {
-                // Celebration card
+                // Celebration card when 100% attendance & all submitted
                 ctx.fillStyle = '#ECFDF5';
                 drawRoundRect(ctx, pad, bodyY, contentW, bodyH, 20);
                 ctx.fill();
-
                 ctx.strokeStyle = '#10B981';
                 ctx.lineWidth = 3;
                 drawRoundRect(ctx, pad, bodyY, contentW, bodyH, 20);
@@ -1986,55 +1968,44 @@
                 ctx.fillText('Exceptional commitment to academic excellence by all students today.', SIZE / 2, bodyY + bodyH / 2 + 36);
             }
 
-            /* ── SECTION 5: FOOTER (Centered) ── */
+            // Footer Section
             ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-
-            ctx.font = '900 18px Inter, sans-serif';
+            ctx.textBaseline = 'top';
             ctx.fillStyle = '#1E3A8A';
+            ctx.font = '900 18px Inter, sans-serif';
             ctx.fillText('Regular attendance   •   Timely homework   •   Daily revision', SIZE / 2, footerY + 6);
 
-            ctx.font = '700 15px Inter, sans-serif';
             ctx.fillStyle = '#475569';
+            ctx.font = '700 15px Inter, sans-serif';
             ctx.fillText('PW ALIPURDUAR VIDYAPEETH   |   Generated: ' + istTimestamp, SIZE / 2, footerY + 34);
 
             return canvas;
         }
 
-        /* ── ASYNC GENERATE REPORT ─────────────────────────── */
+        /* ── GENERATIVE FLOW WAITING FOR MOBILE FONT STABILIZATION ── */
         async function generateReport() {
-            const dateVal     = (document.getElementById('date-inp')?.value || document.getElementById('date-input')?.value || '');
-            const subject     = (document.getElementById('subject-sel')?.value || document.getElementById('subject-select')?.value || '');
-            const batch       = (document.getElementById('batch-sel')?.value || document.getElementById('batch-select')?.value || '');
-            const dateStrFmt  = fmtDate(dateVal);
-            const dateUpper   = fmtDateUpper(dateVal);
+            const dateVal      = (document.getElementById('date-inp')?.value || document.getElementById('date-input')?.value || '');
+            const subject      = (document.getElementById('subject-sel')?.value || document.getElementById('subject-select')?.value || '');
+            const batch        = (document.getElementById('batch-sel')?.value || document.getElementById('batch-select')?.value || '');
+            const dateStrFmt   = fmtDate(dateVal);
+            const dateUpper    = fmtDateUpper(dateVal);
 
-            const absentList  = batchStudents.filter((_, i) => cardStates[i] === S_ABSENT);
-            const notDoneList = batchStudents.filter((_, i) => cardStates[i] === S_NOT_DONE);
-            const doneList    = batchStudents.filter((_, i) => cardStates[i] === S_DONE);
+            const absentList   = batchStudents.filter((_, i) => cardStates[i] === S_ABSENT);
+            const notDoneList  = batchStudents.filter((_, i) => cardStates[i] === S_NOT_DONE);
+            const doneList     = batchStudents.filter((_, i) => cardStates[i] === S_DONE);
             const presentCount = batchStudents.length - absentList.length;
 
-            // Indian Standard Time (IST) timestamp
             const rawTimestamp = new Date().toLocaleString('en-IN', {
                 timeZone: 'Asia/Kolkata',
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: true
+                day: '2-digit', month: 'short', year: 'numeric',
+                hour: '2-digit', minute: '2-digit', hour12: true
             });
             const istTimestamp = rawTimestamp.replace(/\bam\b/i, 'AM').replace(/\bpm\b/i, 'PM');
 
-            // 1. Build text message for the text tab
             buildTextMessage(dateStrFmt, subject, batch, absentList, notDoneList, doneList, istTimestamp);
 
-            // 2. Open modal on Image Report tab
             switchReportTab('image');
             openOverlay('msg-overlay');
-
-            const wrap = document.getElementById('report-image-wrap');
-            wrap.innerHTML = '<div class="report-image-placeholder"><div class="spinner" style="margin:0 auto 12px"></div>Generating ultra-sharp report image...</div>';
 
             try {
                 if (document.fonts && document.fonts.ready) {
@@ -2057,34 +2028,24 @@
                     istTimestamp
                 });
 
-                // Pre-build lossless PNG blob immediately with dataURL fallback
                 try {
-                    reportBlob = await new Promise((resolve) => {
-                        reportCanvas.toBlob((b) => resolve(b), 'image/png');
-                    });
+                    reportBlob = await new Promise(resolve => reportCanvas.toBlob(resolve, 'image/png', 1.0));
                 } catch (bErr) {
-                    console.warn('toBlob error, using fallback:', bErr);
+                    console.warn('toBlob error:', bErr);
                     reportBlob = null;
                 }
+                const imgDataUrl = reportBlob ? URL.createObjectURL(reportBlob) : reportCanvas.toDataURL('image/png');
 
-                const imgSrc = reportBlob ? URL.createObjectURL(reportBlob) : reportCanvas.toDataURL('image/png');
-                wrap.innerHTML = '';
-                const img = document.createElement('img');
-                img.id = 'preview-report-img';
-                img.src = imgSrc;
-                img.alt = 'PW Homework & Attendance Report';
-                img.loading = 'eager';
-                wrap.appendChild(img);
+                document.getElementById('report-image-wrap').innerHTML =
+                    '<img src="' + imgDataUrl + '" alt="Homework & Attendance Report" id="preview-report-img">';
             } catch (err) {
-                console.error('Canvas report generation failed:', err);
-                wrap.innerHTML = '<div class="report-image-placeholder" style="color:var(--txt3)">⚠️ Image generation encountered an issue. Please use the WhatsApp Text tab.</div>';
+                console.error('Drawing Failure:', err);
+                document.getElementById('report-image-wrap').innerHTML =
+                    '<div class="report-image-placeholder">⚠️ Could not generate image. Use the Text Message tab instead.</div>';
             }
         }
 
-        // Backward-compatible alias
-        function generateMessage() {
-            generateReport();
-        }
+        function generateMessage() { generateReport(); }
 
         /* ── BUILD TEXT MESSAGE (for text tab) ────────────── */
         function buildTextMessage(dateStr, subject, batch, absentList, notDoneList, doneList, istTimestamp) {
@@ -2129,101 +2090,38 @@
             document.getElementById('msg-box').textContent = msg;
         }
 
-        /* ── COPY HD IMAGE TO CLIPBOARD (GESTURE SAFE) ─────── */
+        /* ── CLIPBOARD COPY USING GESTURE-PRESERVED Promise ─── */
         async function copyImage() {
-            const copyBtn = document.getElementById('copy-img-btn');
-            if (!reportCanvas && !reportBlob) {
-                toast('Please wait for image to generate ⏳');
+            if (!reportCanvas) {
+                toast('No report generated yet!', 'err');
                 return;
             }
-
-            const origText = copyBtn ? copyBtn.innerHTML : '';
-            if (copyBtn) copyBtn.innerHTML = '⏳ Copying...';
+            const btn = document.getElementById('copy-img-btn');
+            const origHtml = btn ? btn.innerHTML : '';
 
             try {
                 if (navigator.clipboard && window.ClipboardItem) {
-                    const itemPromise = reportBlob
-                        ? Promise.resolve(reportBlob)
-                        : new Promise(resolve => reportCanvas.toBlob(resolve, 'image/png', 1.0));
-
-                    await navigator.clipboard.write([
-                        new ClipboardItem({ 'image/png': itemPromise })
-                    ]);
-
-                    toast('HD Report image copied to clipboard! Paste directly into WhatsApp 📋');
-                } else {
-                    throw new Error('ClipboardItem not supported');
-                }
-            } catch (err) {
-                console.warn('Clipboard write failed, triggering download:', err);
-                toast('Direct copy not supported on this browser. Downloading image instead... 📥');
-                downloadImage();
-            } finally {
-                if (copyBtn) copyBtn.innerHTML = origText;
-            }
-        }
-
-        /* ── NATIVE WHATSAPP / SYSTEM SHARE ────────────────── */
-        async function shareImageWhatsApp() {
-            const shareBtn = document.getElementById('share-img-btn');
-            if (!reportCanvas && !reportBlob) {
-                toast('Please wait for image to generate ⏳');
-                return;
-            }
-
-            const origText = shareBtn ? shareBtn.innerHTML : '';
-            if (shareBtn) shareBtn.innerHTML = '⏳ Sharing...';
-
-            try {
-                const blob = reportBlob || await new Promise(resolve => reportCanvas.toBlob(resolve, 'image/png', 1.0));
-                const batch = (document.getElementById('batch-sel')?.value || document.getElementById('batch-select')?.value || 'Report').replace(/[^a-zA-Z0-9_-]/g, '_');
-                const file = new File([blob], 'PW_Report_' + batch + '.png', { type: 'image/png' });
-
-                if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                    await navigator.share({
-                        files: [file],
-                        title: 'PW Vidyapeeth Report',
-                        text: 'PW Alipurduar Vidyapeeth — Daily Academic Report'
+                    const item = new ClipboardItem({
+                        'image/png': reportBlob
+                            ? Promise.resolve(reportBlob)
+                            : new Promise((resolve, reject) => {
+                                reportCanvas.toBlob(b => b ? resolve(b) : reject(new Error('Blob Failed')), 'image/png', 1.0);
+                            })
                     });
-                    toast('Shared successfully! 📲');
+                    await navigator.clipboard.write([item]);
+
+                    if (btn) {
+                        btn.innerHTML = '✅ HD Image Copied!';
+                        setTimeout(() => { btn.innerHTML = origHtml; }, 2500);
+                    }
+                    toast('Image copied to clipboard! Paste directly in WhatsApp ✅');
                 } else {
-                    toast('Direct file share not supported here. Copying HD image to clipboard instead... 📋');
-                    await copyImage();
+                    throw new Error('Fallback called');
                 }
             } catch (err) {
-                if (err.name !== 'AbortError') {
-                    console.warn('Share failed:', err);
-                    toast('Share dismissed or not available. Use Copy HD Image or Download PNG.');
-                }
-            } finally {
-                if (shareBtn) shareBtn.innerHTML = origText;
+                console.warn('Clipboard Failure:', err);
+                toast('Your device browser blocked instant clipboard copy — Take a quick screenshot or share using text fallback! 📤', 'err');
             }
-        }
-
-        /* ── DOWNLOAD REPORT IMAGE PNG ─────────────────────── */
-        function downloadImage() {
-            if (!reportCanvas && !reportBlob) {
-                toast('No report image generated yet ⏳');
-                return;
-            }
-
-            const batch = (document.getElementById('batch-sel')?.value || document.getElementById('batch-select')?.value || 'BATCH').replace(/[^a-zA-Z0-9_-]/g, '_');
-            const dateStr = (document.getElementById('date-inp')?.value || document.getElementById('date-input')?.value || 'DATE').replace(/[^a-zA-Z0-9_-]/g, '_');
-            const fileName = `PW_Alipurduar_Report_${batch}_${dateStr}.png`;
-
-            const link = document.createElement('a');
-            link.download = fileName;
-
-            if (reportBlob) {
-                link.href = URL.createObjectURL(reportBlob);
-            } else {
-                link.href = reportCanvas.toDataURL('image/png', 1.0);
-            }
-
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            toast('HD Report image downloaded! 📥');
         }
 
         /* ── COPY TEXT MESSAGE TO CLIPBOARD ────────────────── */
