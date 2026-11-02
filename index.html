@@ -783,10 +783,10 @@
         
         .report-image-wrap{
             background:#0b0c16;border:1px solid rgba(255,255,255,.1);border-radius:16px;
-            padding:16px 12px;margin-bottom:14px;text-align:center;max-height:55vh;overflow-y:auto;
+            padding:16px 12px;margin-bottom:14px;text-align:center;max-height:58vh;overflow-y:auto;
         }
         .report-image-wrap img{
-            max-width:100%;border-radius:12px;display:block;margin:0 auto;
+            max-width:100%;aspect-ratio:1/1;object-fit:contain;border-radius:12px;display:block;margin:0 auto;
             box-shadow:0 8px 32px rgba(0,0,0,.65);border:1px solid rgba(255,255,255,0.12);
         }
         .report-image-placeholder{
@@ -1597,81 +1597,45 @@
             return day + ' ' + month + ' ' + year;
         }
 
-        /* ── CANVAS 2D REPORT CARD GENERATOR ───────────────── */
-        /* Exact pixel-perfect implementation of the PW Vidyapeeth report card */
+        /* ── CANVAS 2D REPORT CARD GENERATOR (1:1 SQUARE & HD QUALITY) ── */
         function drawReportCanvas(data) {
             const { dateStr, subject, batch, absentList, notDoneList, doneList, presentCount, totalStudents, istTimestamp } = data;
 
-            const W = 680;
-            const pad = 20;
-            const contentW = W - pad * 2; // 640px
-            const rowH = 26;
+            // Strict 1:1 Aspect Ratio (Square: 1000px × 1000px)
+            const SIZE = 1000;
+            const pad = 24;
+            const contentW = SIZE - pad * 2; // 952px
 
-            // Dimensions calculation
-            const headerH = 100;
-            const infoH = 52;
-            const statsH = 76;
-
-            // HW Not Submitted
-            const hwNotHeaderH = 38;
-            const hwNotRows = Math.max(notDoneList.length, 1);
-            const hwNotNoticeH = notDoneList.length > 0 ? 32 : 0;
-            const hwNotBodyH = hwNotRows * rowH + hwNotNoticeH + 12;
-            const hwNotSectionH = hwNotHeaderH + hwNotBodyH;
-
-            // Two Columns
-            const colW = Math.floor((contentW - 14) / 2); // 313px
-
-            // Left Col (Absent)
-            const absentHeaderH = 36;
-            const absentRows = Math.max(absentList.length, 1);
-            const absentBodyH = absentRows * rowH + 14;
-            const leftColH = absentHeaderH + absentBodyH;
-
-            // Right Col (Submitted + Present Box)
-            const doneHeaderH = 36;
-            const doneRows = Math.max(doneList.length, 1);
-            const doneBodyH = doneRows * rowH + 14;
-            const doneSectionH = doneHeaderH + doneBodyH;
-            const presentBoxH = 96;
-            const rightColH = doneSectionH + 14 + presentBoxH;
-
-            const twoColH = Math.max(leftColH, rightColH);
-            const footerH = 52;
-
-            // Total dynamic canvas height
-            const totalH = pad + headerH + 14 + infoH + 14 + statsH + 16 + hwNotSectionH + 16 + twoColH + 20 + footerH + pad;
-
-            // Setup Canvas with 2x High-DPI scaling
+            // High-Definition 2x Scale (Output: 2000px × 2000px HD PNG)
             const scale = 2;
             const canvas = document.createElement('canvas');
-            canvas.width = W * scale;
-            canvas.height = totalH * scale;
+            canvas.width = SIZE * scale;
+            canvas.height = SIZE * scale;
             const ctx = canvas.getContext('2d');
             ctx.scale(scale, scale);
 
             ctx.imageSmoothingEnabled = true;
             ctx.imageSmoothingQuality = 'high';
 
-            // Background: #f1f5f9
+            // Background: Clean modern slate #f1f5f9
             ctx.fillStyle = '#f1f5f9';
-            drawRoundRect(ctx, 0, 0, W, totalH, 0);
-            ctx.fill();
+            ctx.fillRect(0, 0, SIZE, SIZE);
 
             let curY = pad;
 
-            // ── 1. Top Header Card (Pure White) ──
+            // ── 1. Top Header Card (White Card) ──
+            const headerH = 110;
             ctx.fillStyle = '#ffffff';
             drawRoundRect(ctx, pad, curY, contentW, headerH, 14);
             ctx.fill();
             ctx.strokeStyle = '#e2e8f0';
-            ctx.lineWidth = 1;
+            ctx.lineWidth = 1.2;
             ctx.stroke();
 
             // Circular PW Logo (Monogram)
-            const logoX = pad + 38;
+            const logoX = pad + 44;
             const logoY = curY + headerH / 2;
-            const logoRadius = 26;
+            const logoRadius = 28;
 
             ctx.save();
             ctx.fillStyle = '#000000';
@@ -1682,24 +1646,24 @@
             ctx.fillStyle = '#ffffff';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.font = 'bold 22px "Times New Roman", Georgia, serif';
-            ctx.fillText('P', logoX - 4, logoY - 7);
-            ctx.font = 'bold 19px "Times New Roman", Georgia, serif';
-            ctx.fillText('W', logoX + 5, logoY + 8);
+            ctx.font = 'bold 24px "Times New Roman", Georgia, serif';
+            ctx.fillText('P', logoX - 4, logoY - 8);
+            ctx.font = 'bold 20px "Times New Roman", Georgia, serif';
+            ctx.fillText('W', logoX + 5, logoY + 9);
             ctx.restore();
 
             // Header Text Block
-            const textStartX = logoX + logoRadius + 18;
+            const textStartX = logoX + logoRadius + 20;
 
             // VIDYAPEETH
             ctx.fillStyle = '#111827';
-            ctx.font = '900 27px Poppins, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+            ctx.font = '900 30px Poppins, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
             ctx.textAlign = 'left';
             ctx.textBaseline = 'top';
-            ctx.fillText('VIDYAPEETH', textStartX, curY + 14);
+            ctx.fillText('VIDYAPEETH', textStartX, curY + 16);
 
             // IIT-JEE | NEET | FOUNDATION
-            const tagY = curY + 48;
+            const tagY = curY + 52;
             ctx.font = '800 13px Inter, -apple-system, BlinkMacSystemFont, sans-serif';
             let currX = textStartX;
             ctx.fillStyle = '#e11d48';
@@ -1722,36 +1686,70 @@
             ctx.fillText('FOUNDATION', currX, tagY);
 
             // HOMEWORK & ATTENDANCE REPORT
-            const repY = curY + 68;
+            const repY = curY + 74;
             ctx.fillStyle = '#15345d';
-            ctx.font = '800 12.5px Inter, -apple-system, BlinkMacSystemFont, sans-serif';
+            ctx.font = '800 13px Inter, -apple-system, BlinkMacSystemFont, sans-serif';
             ctx.fillText('HOMEWORK & ATTENDANCE REPORT', textStartX, repY);
 
             curY += headerH + 14;
 
-            // ── 2. Info Bar (Navy) ──
+            // ── 2. Info Bar (Deep Navy) ──
+            const infoH = 48;
             ctx.fillStyle = '#15345d';
             drawRoundRect(ctx, pad, curY, contentW, infoH, 10);
             ctx.fill();
 
             ctx.fillStyle = '#ffffff';
-            ctx.font = '700 12px Inter, -apple-system, BlinkMacSystemFont, sans-serif';
+            ctx.font = '700 12.5px Inter, -apple-system, BlinkMacSystemFont, sans-serif';
             ctx.textAlign = 'left';
-            ctx.textBaseline = 'top';
-            ctx.fillText('DATE: ' + (dateStr || '').toUpperCase(), pad + 18, curY + 10);
-            ctx.fillText('SUBJECT: ' + (subject || '').toUpperCase() + '   |   BATCH: ' + (batch || '').toUpperCase(), pad + 18, curY + 28);
+            ctx.textBaseline = 'middle';
+            const infoMidY = curY + infoH / 2;
+            ctx.fillText('DATE: ' + (dateStr || '').toUpperCase() + '   |   BATCH: ' + (batch || '').toUpperCase() + '   |   SUBJECT: ' + (subject || '').toUpperCase(), pad + 20, infoMidY);
 
-            curY += infoH + 14;
+            curY += infoH + 12;
 
-            // ── 3. Four Summary Stat Cards ──
-            const gap = 10;
+            // ── 3. Four Summary Stat Cards Row ──
+            const statsH = 76;
+            const gap = 12;
             const cardW = (contentW - gap * 3) / 4;
 
             const summaryCards = [
-                { title: 'PRESENT', count: '—', sub: 'Names not provided', bg: '#eafaf1', text: '#15803d', subColor: '#16a34a', countColor: '#15803d' },
-                { title: 'ABSENT', count: String(absentList.length), sub: absentList.length + ' students listed', bg: '#fef2f2', text: '#b91c1c', subColor: '#dc2626', countColor: '#b91c1c' },
-                { title: 'HOMEWORK NOT SUBMITTED', count: String(notDoneList.length), sub: 'Priority follow-up', bg: '#fff7ed', text: '#c2410c', subColor: '#ea580c', countColor: '#c2410c' },
-                { title: 'HOMEWORK SUBMITTED', count: String(doneList.length), sub: doneList.length + ' students listed', bg: '#f0f7ff', text: '#0369a1', subColor: '#0284c7', countColor: '#0369a1' }
+                {
+                    title: 'PRESENT',
+                    count: String(presentCount),
+                    sub: presentCount + ' present today',
+                    bg: '#eafaf1',
+                    text: '#15803d',
+                    subColor: '#16a34a',
+                    countColor: '#15803d'
+                },
+                {
+                    title: 'ABSENT',
+                    count: String(absentList.length),
+                    sub: absentList.length === 0 ? '100% Attendance 🎉' : absentList.length + ' students absent',
+                    bg: '#fef2f2',
+                    text: '#b91c1c',
+                    subColor: '#dc2626',
+                    countColor: '#b91c1c'
+                },
+                {
+                    title: 'HW NOT SUBMITTED',
+                    count: String(notDoneList.length),
+                    sub: notDoneList.length === 0 ? 'All Completed 🎉' : 'Priority follow-up',
+                    bg: '#fff7ed',
+                    text: '#c2410c',
+                    subColor: '#ea580c',
+                    countColor: '#c2410c'
+                },
+                {
+                    title: 'HW SUBMITTED',
+                    count: String(doneList.length),
+                    sub: doneList.length + ' students submitted',
+                    bg: '#f0f7ff',
+                    text: '#0369a1',
+                    subColor: '#0284c7',
+                    countColor: '#0369a1'
+                }
             ];
 
             summaryCards.forEach((c, idx) => {
@@ -1761,200 +1759,235 @@
                 ctx.fill();
 
                 ctx.fillStyle = c.text;
-                ctx.font = '800 9.5px Inter, sans-serif';
+                ctx.font = '800 10px Inter, sans-serif';
                 ctx.textAlign = 'left';
                 ctx.textBaseline = 'top';
-                ctx.fillText(c.title, cx + 11, curY + 10);
+                ctx.fillText(c.title, cx + 12, curY + 10);
 
                 ctx.fillStyle = c.countColor;
-                ctx.font = '800 22px Poppins, Inter, sans-serif';
-                ctx.fillText(c.count, cx + 11, curY + 26);
+                ctx.font = '800 23px Poppins, Inter, sans-serif';
+                ctx.fillText(c.count, cx + 12, curY + 26);
 
                 ctx.fillStyle = c.subColor;
-                ctx.font = '600 8.5px Inter, sans-serif';
-                ctx.fillText(c.sub, cx + 11, curY + 54);
+                ctx.font = '600 9px Inter, sans-serif';
+                ctx.fillText(c.sub, cx + 12, curY + 54);
             });
 
             curY += statsH + 16;
 
-            // ── 4. Main Section: HW NOT SUBMITTED ──
-            const hwNotTitle = '⚠  HOMEWORK NOT SUBMITTED (' + notDoneList.length + ' STUDENTS)';
-            ctx.fillStyle = '#a83427';
-            drawRoundRect(ctx, pad, curY, contentW, hwNotHeaderH, [10, 10, 0, 0]);
-            ctx.fill();
+            // ── 4. Dynamic Body Space: Space-Filling Adaptive Layout ──
+            const footerH = 44;
+            const footerY = SIZE - pad - footerH;
+            const bodyY = curY;
+            const bodyH = footerY - 16 - bodyY; // Available height for student list sections
+            const bodyW = contentW;
+            const bodyX = pad;
 
-            ctx.fillStyle = '#ffffff';
-            ctx.font = '800 12.5px Inter, sans-serif';
-            ctx.textAlign = 'left';
-            ctx.textBaseline = 'top';
-            ctx.fillText(hwNotTitle, pad + 18, curY + 11);
+            // Determine active categories (categories with 0 students are completely omitted!)
+            const activeCats = [];
+            if (notDoneList.length > 0) activeCats.push('notDone');
+            if (absentList.length > 0)   activeCats.push('absent');
+            if (doneList.length > 0)     activeCats.push('done');
 
-            ctx.fillStyle = '#fffdfa';
-            drawRoundRect(ctx, pad, curY + hwNotHeaderH, contentW, hwNotBodyH, [0, 0, 10, 10]);
-            ctx.fill();
-            ctx.strokeStyle = '#c2410c';
-            ctx.lineWidth = 1.8;
-            ctx.stroke();
+            // Category card rendering helper (names only, no reg_no, auto-flowing columns)
+            function renderCategoryCard(box, cfg) {
+                const { title, icon, students, headerBg, borderColor, bodyBg, footerNote, noteColor } = cfg;
+                const { x, y, w, h, cols } = box;
+                const headerH = 38;
 
-            let rowY = curY + hwNotHeaderH + 12;
-            if (notDoneList.length === 0) {
-                ctx.fillStyle = '#16a34a';
-                ctx.font = '700 11.5px Inter, sans-serif';
+                // Card Header
+                ctx.fillStyle = headerBg;
+                drawRoundRect(ctx, x, y, w, headerH, [10, 10, 0, 0]);
+                ctx.fill();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '800 13px Inter, sans-serif';
                 ctx.textAlign = 'left';
-                ctx.fillText('All present students have submitted their homework! 🎉', pad + 18, rowY + 2);
-            } else {
-                notDoneList.forEach((s, n) => {
-                    ctx.fillStyle = '#1f2937';
-                    ctx.font = '700 11.5px Inter, sans-serif';
-                    ctx.textAlign = 'left';
-                    ctx.fillText((n + 1) + '.   ' + s.name.toUpperCase(), pad + 18, rowY);
+                ctx.textBaseline = 'middle';
+                ctx.fillText(icon + '  ' + title + ' (' + students.length + ')', x + 16, y + headerH / 2);
 
-                    ctx.fillStyle = '#4b5563';
-                    ctx.font = '600 11px Inter, sans-serif';
-                    ctx.textAlign = 'right';
-                    ctx.fillText(s.reg_no || '', pad + contentW - 18, rowY);
-                    rowY += rowH;
-                });
+                // Card Body
+                const bodyCardH = h - headerH;
+                ctx.fillStyle = bodyBg || '#ffffff';
+                drawRoundRect(ctx, x, y + headerH, w, bodyCardH, [0, 0, 10, 10]);
+                ctx.fill();
+                ctx.strokeStyle = borderColor || '#e2e8f0';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
 
-                ctx.fillStyle = '#a83427';
-                ctx.font = '800 10.5px Inter, sans-serif';
+                // Compute student names layout
+                const hasNote = Boolean(footerNote);
+                const noteH = hasNote ? 32 : 0;
+                const availTop = y + headerH + 12;
+                const availH = bodyCardH - noteH - 24;
+                const availW = w - 32;
+
+                const colCount = Math.max(1, cols || 1);
+                const rowsPerCol = Math.ceil(students.length / colCount);
+                const rowH = Math.max(18, Math.min(27, Math.floor(availH / rowsPerCol)));
+                const fontSize = Math.max(10.5, Math.min(13.5, Math.floor(rowH * 0.58)));
+                const colWidth = availW / colCount;
+
+                ctx.font = '700 ' + fontSize + 'px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
                 ctx.textAlign = 'left';
-                ctx.fillText('PARENTS: Please ensure that pending homework is completed and submitted.', pad + 18, rowY + 4);
-            }
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = '#1f2937';
 
-            curY += hwNotSectionH + 16;
+                students.forEach((s, i) => {
+                    const cIdx = Math.floor(i / rowsPerCol);
+                    const rIdx = i % rowsPerCol;
+                    const itemX = x + 16 + cIdx * colWidth;
+                    const itemY = availTop + rIdx * rowH + (rowH / 2);
 
-            // ── 5. Two Columns (Absent vs HW Submitted + Present) ──
-            const col1X = pad;
-            const col2X = pad + colW + 14;
-
-            // Column 1: ABSENT TODAY
-            ctx.fillStyle = '#a83427';
-            drawRoundRect(ctx, col1X, curY, colW, absentHeaderH, [10, 10, 0, 0]);
-            ctx.fill();
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = '800 12px Inter, sans-serif';
-            ctx.textAlign = 'left';
-            ctx.textBaseline = 'top';
-            ctx.fillText('ABSENT TODAY (' + absentList.length + ')', col1X + 14, curY + 11);
-
-            const absentActualBodyH = twoColH - absentHeaderH;
-            ctx.fillStyle = '#ffffff';
-            drawRoundRect(ctx, col1X, curY + absentHeaderH, colW, absentActualBodyH, [0, 0, 10, 10]);
-            ctx.fill();
-            ctx.strokeStyle = '#e2e8f0';
-            ctx.lineWidth = 1;
-            ctx.stroke();
-
-            let absY = curY + absentHeaderH + 12;
-            if (absentList.length === 0) {
-                ctx.fillStyle = '#16a34a';
-                ctx.font = '700 11px Inter, sans-serif';
-                ctx.textAlign = 'left';
-                ctx.fillText('100% Attendance today! No absentees. 🌟', col1X + 14, absY + 2);
-            } else {
-                absentList.forEach((s, n) => {
-                    ctx.fillStyle = '#1f2937';
-                    ctx.font = '700 11px Inter, sans-serif';
-                    ctx.textAlign = 'left';
-
-                    let displayName = (n + 1) + '. ' + s.name;
-                    while (ctx.measureText(displayName).width > (colW - 86) && displayName.length > 5) {
+                    let displayName = (i + 1) + '. ' + s.name.toUpperCase();
+                    // Measure and truncate if too long for column
+                    while (ctx.measureText(displayName).width > (colWidth - 12) && displayName.length > 6) {
                         displayName = displayName.slice(0, -2) + '…';
                     }
-                    ctx.fillText(displayName, col1X + 14, absY);
-
-                    ctx.fillStyle = '#6b7280';
-                    ctx.font = '500 10.5px Inter, sans-serif';
-                    ctx.textAlign = 'right';
-                    ctx.fillText(s.reg_no || '', col1X + colW - 14, absY);
-                    absY += rowH;
+                    ctx.fillText(displayName, itemX, itemY);
                 });
-            }
 
-            // Column 2: HOMEWORK SUBMITTED (TOP)
-            ctx.fillStyle = '#1e5692';
-            drawRoundRect(ctx, col2X, curY, colW, doneHeaderH, [10, 10, 0, 0]);
-            ctx.fill();
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = '800 12px Inter, sans-serif';
-            ctx.textAlign = 'left';
-            ctx.textBaseline = 'top';
-            ctx.fillText('HOMEWORK SUBMITTED (' + doneList.length + ')', col2X + 14, curY + 11);
-
-            ctx.fillStyle = '#ffffff';
-            drawRoundRect(ctx, col2X, curY + doneHeaderH, colW, doneBodyH, [0, 0, 10, 10]);
-            ctx.fill();
-            ctx.strokeStyle = '#e2e8f0';
-            ctx.lineWidth = 1;
-            ctx.stroke();
-
-            let subY = curY + doneHeaderH + 12;
-            if (doneList.length === 0) {
-                ctx.fillStyle = '#6b7280';
-                ctx.font = '600 11px Inter, sans-serif';
-                ctx.textAlign = 'left';
-                ctx.fillText('No submissions recorded yet.', col2X + 14, subY + 2);
-            } else {
-                doneList.forEach((s, n) => {
-                    ctx.fillStyle = '#1f2937';
-                    ctx.font = '700 11px Inter, sans-serif';
+                // Optional Footer Note inside card
+                if (hasNote) {
+                    ctx.fillStyle = noteColor || '#b91c1c';
+                    ctx.font = '800 11px Inter, sans-serif';
                     ctx.textAlign = 'left';
-                    let displayName = (n + 1) + '. ' + s.name;
-                    while (ctx.measureText(displayName).width > (colW - 86) && displayName.length > 5) {
-                        displayName = displayName.slice(0, -2) + '…';
-                    }
-                    ctx.fillText(displayName, col2X + 14, subY);
-
-                    ctx.fillStyle = '#6b7280';
-                    ctx.font = '500 10.5px Inter, sans-serif';
-                    ctx.textAlign = 'right';
-                    ctx.fillText(s.reg_no || '', col2X + colW - 14, subY);
-                    subY += rowH;
-                });
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(footerNote, x + 16, y + h - 16);
+                }
             }
 
-            // Column 2: PRESENT TODAY (BOTTOM)
-            const presBoxY = curY + doneSectionH + 14;
-            const presBoxActualH = curY + twoColH - presBoxY;
+            // Compute adaptive boxes based on active categories
+            const categoryConfigs = {
+                notDone: {
+                    title: 'HOMEWORK NOT SUBMITTED',
+                    icon: '⚠',
+                    students: notDoneList,
+                    headerBg: '#a83427',
+                    borderColor: '#c2410c',
+                    bodyBg: '#fffdfa',
+                    footerNote: 'PARENTS: Please ensure that pending homework is completed and submitted.',
+                    noteColor: '#a83427'
+                },
+                absent: {
+                    title: 'ABSENT TODAY',
+                    icon: '🚫',
+                    students: absentList,
+                    headerBg: '#991b1b',
+                    borderColor: '#fca5a5',
+                    bodyBg: '#ffffff',
+                    footerNote: absentList.length > 0 ? 'Please contact PW Alipurduar Vidyapeeth desk regarding absence.' : '',
+                    noteColor: '#64748b'
+                },
+                done: {
+                    title: 'HOMEWORK SUBMITTED',
+                    icon: '✅',
+                    students: doneList,
+                    headerBg: '#1e5692',
+                    borderColor: '#93c5fd',
+                    bodyBg: '#ffffff',
+                    footerNote: '🌟 Appreciated for regular and timely homework submission!',
+                    noteColor: '#1e5692'
+                }
+            };
 
-            ctx.fillStyle = '#f0f5fc';
-            drawRoundRect(ctx, col2X, presBoxY, colW, Math.max(presBoxActualH, presentBoxH), 10);
-            ctx.fill();
-            ctx.strokeStyle = '#d0e1f7';
-            ctx.lineWidth = 1;
-            ctx.stroke();
+            const boxGap = 14;
 
-            ctx.fillStyle = '#15345d';
-            ctx.font = '800 12px Inter, sans-serif';
-            ctx.textAlign = 'left';
-            ctx.textBaseline = 'top';
-            ctx.fillText('PRESENT TODAY', col2X + 14, presBoxY + 12);
+            if (activeCats.length === 3) {
+                // All 3 active
+                if (notDoneList.length <= 6) {
+                    // Top full-width banner for HW Not Submitted, bottom 2 equal columns
+                    const topH = 138;
+                    const btmH = bodyH - topH - boxGap;
+                    const colW = Math.floor((bodyW - boxGap) / 2);
 
-            ctx.fillStyle = '#1f2937';
-            ctx.font = '700 11px Inter, sans-serif';
-            ctx.fillText('Count: Not available', col2X + 14, presBoxY + 30);
+                    renderCategoryCard(
+                        { x: bodyX, y: bodyY, w: bodyW, h: topH, cols: notDoneList.length > 3 ? 2 : 1 },
+                        categoryConfigs.notDone
+                    );
+                    renderCategoryCard(
+                        { x: bodyX, y: bodyY + topH + boxGap, w: colW, h: btmH, cols: absentList.length > 10 ? 2 : 1 },
+                        categoryConfigs.absent
+                    );
+                    renderCategoryCard(
+                        { x: bodyX + colW + boxGap, y: bodyY + topH + boxGap, w: colW, h: btmH, cols: doneList.length > 10 ? 2 : 1 },
+                        categoryConfigs.done
+                    );
+                } else {
+                    // Left column = HW Not Submitted (full height), Right column = Absent (top) + Submitted (bottom)
+                    const colW = Math.floor((bodyW - boxGap) / 2);
+                    const prop = absentList.length / (absentList.length + doneList.length);
+                    const absentH = Math.max(160, Math.min(bodyH - 160, Math.round((bodyH - boxGap) * prop)));
+                    const doneH = bodyH - absentH - boxGap;
 
-            ctx.fillStyle = '#6b7280';
-            ctx.font = '500 9.5px Inter, sans-serif';
-            ctx.fillText('Present student names were not', col2X + 14, presBoxY + 48);
-            ctx.fillText('included in the supplied report.', col2X + 14, presBoxY + 62);
-            ctx.fillText('Share present list to complete this section.', col2X + 14, presBoxY + 76);
+                    renderCategoryCard(
+                        { x: bodyX, y: bodyY, w: colW, h: bodyH, cols: notDoneList.length > 12 ? 2 : 1 },
+                        categoryConfigs.notDone
+                    );
+                    renderCategoryCard(
+                        { x: bodyX + colW + boxGap, y: bodyY, w: colW, h: absentH, cols: absentList.length > 8 ? 2 : 1 },
+                        categoryConfigs.absent
+                    );
+                    renderCategoryCard(
+                        { x: bodyX + colW + boxGap, y: bodyY + absentH + boxGap, w: colW, h: doneH, cols: doneList.length > 8 ? 2 : 1 },
+                        categoryConfigs.done
+                    );
+                }
+            } else if (activeCats.length === 2) {
+                // Exactly 2 categories active -> 50% left & 50% right columns, full height!
+                const colW = Math.floor((bodyW - boxGap) / 2);
+                const [c1, c2] = activeCats;
+                const cfg1 = categoryConfigs[c1];
+                const cfg2 = categoryConfigs[c2];
 
-            curY += twoColH + 20;
+                renderCategoryCard(
+                    { x: bodyX, y: bodyY, w: colW, h: bodyH, cols: cfg1.students.length > 10 ? 2 : 1 },
+                    cfg1
+                );
+                renderCategoryCard(
+                    { x: bodyX + colW + boxGap, y: bodyY, w: colW, h: bodyH, cols: cfg2.students.length > 10 ? 2 : 1 },
+                    cfg2
+                );
+            } else if (activeCats.length === 1) {
+                // Exactly 1 category active -> Full width & height!
+                const c1 = activeCats[0];
+                const cfg = categoryConfigs[c1];
+                const cols = cfg.students.length > 20 ? 3 : 2;
 
-            // ── 6. Footer ──
+                renderCategoryCard(
+                    { x: bodyX, y: bodyY, w: bodyW, h: bodyH, cols },
+                    cfg
+                );
+            } else {
+                // 0 categories active: Celebration card
+                ctx.fillStyle = '#ffffff';
+                drawRoundRect(ctx, bodyX, bodyY, bodyW, bodyH, 12);
+                ctx.fill();
+                ctx.strokeStyle = '#10b981';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.fillStyle = '#10b981';
+                ctx.font = '800 24px Poppins, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('🎉 ALL HOMEWORK COMPLETED & 100% ATTENDANCE TODAY!', bodyX + bodyW / 2, bodyY + bodyH / 2 - 16);
+
+                ctx.fillStyle = '#64748b';
+                ctx.font = '600 14px Inter, sans-serif';
+                ctx.fillText('All students have attended and submitted their homework on time.', bodyX + bodyW / 2, bodyY + bodyH / 2 + 20);
+            }
+
+            // ── 5. Footer (Bottom-aligned in 1:1 square) ──
             ctx.textAlign = 'center';
             ctx.textBaseline = 'top';
             ctx.fillStyle = '#15345d';
-            ctx.font = '800 11px Inter, sans-serif';
-            ctx.fillText('Regular attendance  •  Timely homework  •  Daily revision', W / 2, curY + 6);
+            ctx.font = '800 12px Inter, sans-serif';
+            ctx.fillText('Regular attendance  •  Timely homework  •  Daily revision', SIZE / 2, footerY + 6);
 
-            ctx.fillStyle = '#6b7280';
-            ctx.font = '500 9.5px Inter, sans-serif';
-            ctx.fillText('PW ALIPURDUAR VIDYAPEETH  |  Generated: ' + istTimestamp, W / 2, curY + 24);
+            ctx.fillStyle = '#64748b';
+            ctx.font = '500 10.5px Inter, sans-serif';
+            ctx.fillText('PW ALIPURDUAR VIDYAPEETH  |  Generated: ' + istTimestamp, SIZE / 2, footerY + 24);
 
             return canvas;
         }
