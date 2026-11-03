@@ -1692,18 +1692,18 @@
                 ctx.fillStyle = '#FFFFFF';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.font = 'bold 34px Georgia, serif';
+                ctx.font = 'bold 36px Georgia, serif';
                 ctx.fillText('P', logoX - 7, logoY - 12);
-                ctx.font = 'bold 30px Georgia, serif';
+                ctx.font = 'bold 32px Georgia, serif';
                 ctx.fillText('W', logoX + 7, logoY + 14);
 
                 const textX = logoX + logoR + 24;
                 ctx.textAlign = 'left';
                 ctx.textBaseline = 'top';
                 ctx.fillStyle = '#0F172A';
-                ctx.font = '900 32px Poppins, Inter, sans-serif';
+                ctx.font = '900 34px Poppins, Inter, sans-serif';
                 ctx.fillText('VIDYAPEETH', textX, curY + 38);
-                ctx.font = '700 14px Inter, sans-serif';
+                ctx.font = '700 16px Inter, sans-serif';
                 ctx.fillStyle = '#E11D48';
                 ctx.fillText('IIT-JEE | NEET | FOUNDATION', textX, curY + 80);
             }
@@ -1714,21 +1714,21 @@
             ctx.textBaseline = 'top';
 
             ctx.fillStyle = '#0F172A';
-            ctx.font = '900 42px Poppins, Inter, sans-serif';
+            ctx.font = '900 44px Poppins, Inter, sans-serif';
             ctx.fillText('PW ALIPURDUAR VIDYAPEETH', centerTitleX, curY + 24);
 
             ctx.fillStyle = '#1E3A8A';
-            ctx.font = '900 24px Inter, sans-serif';
+            ctx.font = '900 26px Inter, sans-serif';
             ctx.fillText('HOMEWORK & ATTENDANCE REPORT', centerTitleX, curY + 82);
 
             // Top-Right Date Block
             ctx.textAlign = 'right';
             ctx.textBaseline = 'top';
             ctx.fillStyle = '#0F172A';
-            ctx.font = '900 24px Poppins, Inter, sans-serif';
+            ctx.font = '900 26px Poppins, Inter, sans-serif';
             ctx.fillText('DATE: ' + (dateStr || '').toUpperCase(), pad + contentW - 28, curY + 30);
             ctx.fillStyle = '#475569';
-            ctx.font = '700 16px Inter, sans-serif';
+            ctx.font = '700 18px Inter, sans-serif';
             ctx.fillText('Daily Academic Tracker', pad + contentW - 28, curY + 60);
 
             curY += headerH + 16;
@@ -1740,7 +1740,7 @@
             ctx.fill();
 
             ctx.fillStyle = '#FFFFFF';
-            ctx.font = '800 21px Inter, sans-serif';
+            ctx.font = '800 23px Inter, sans-serif';
             ctx.textBaseline = 'middle';
             ctx.textAlign = 'left';
             ctx.fillText('BATCH: ' + (batch || '').toUpperCase(), pad + 28, curY + infoH / 2);
@@ -1775,13 +1775,13 @@
                 ctx.fillStyle = st.text;
                 ctx.textAlign = 'left';
                 ctx.textBaseline = 'top';
-                ctx.font = '900 16px Inter, sans-serif';
+                ctx.font = '900 18px Inter, sans-serif';
                 ctx.fillText(st.title, sx + 22, curY + 14);
 
-                ctx.font = '900 44px Poppins, Inter, sans-serif';
+                ctx.font = '900 46px Poppins, Inter, sans-serif';
                 ctx.fillText(st.count, sx + 22, curY + 36);
 
-                ctx.font = '700 15px Inter, sans-serif';
+                ctx.font = '700 17px Inter, sans-serif';
                 ctx.fillText(st.sub, sx + 22, curY + 86);
             });
 
@@ -1816,7 +1816,7 @@
                 ctx.stroke();
 
                 ctx.fillStyle = '#FFFFFF';
-                ctx.font = '900 21px Inter, sans-serif';
+                ctx.font = '900 23px Inter, sans-serif';
                 ctx.textAlign = 'left';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(badge + '  ' + title + ' (' + students.length + ')', x + 24, y + headH / 2);
@@ -1839,7 +1839,7 @@
                 const rows = Math.max(1, Math.ceil(students.length / cols));
                 const rawRowH = Math.floor(listH / rows);
                 const rowH = Math.min(48, Math.max(24, rawRowH));
-                const fontSize = Math.min(24, Math.max(16, Math.floor(rowH * 0.58)));
+                const fontSize = Math.min(26, Math.max(18, Math.floor(rowH * 0.58) + 2));
                 const colW = Math.floor(listW / cols);
 
                 ctx.font = '800 ' + fontSize + 'px Inter, sans-serif';
@@ -1866,7 +1866,7 @@
                     ctx.stroke();
 
                     ctx.fillStyle = noteColor || '#475569';
-                    ctx.font = '800 16px Inter, sans-serif';
+                    ctx.font = '800 18px Inter, sans-serif';
                     ctx.textAlign = 'left';
                     ctx.textBaseline = 'middle';
                     ctx.fillText(footerNote, x + 24, y + h - noteH / 2);
@@ -1959,11 +1959,11 @@
 
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.font = '900 48px Poppins, Inter, sans-serif';
+                ctx.font = '900 50px Poppins, Inter, sans-serif';
                 ctx.fillStyle = '#047857';
                 ctx.fillText('🎉 100% ATTENDANCE & ALL HOMEWORK SUBMITTED!', SIZE / 2, bodyY + bodyH / 2 - 20);
 
-                ctx.font = '700 24px Inter, sans-serif';
+                ctx.font = '700 26px Inter, sans-serif';
                 ctx.fillStyle = '#065F46';
                 ctx.fillText('Exceptional commitment to academic excellence by all students today.', SIZE / 2, bodyY + bodyH / 2 + 36);
             }
@@ -1972,11 +1972,11 @@
             ctx.textAlign = 'center';
             ctx.textBaseline = 'top';
             ctx.fillStyle = '#1E3A8A';
-            ctx.font = '900 18px Inter, sans-serif';
+            ctx.font = '900 20px Inter, sans-serif';
             ctx.fillText('Regular attendance   •   Timely homework   •   Daily revision', SIZE / 2, footerY + 6);
 
             ctx.fillStyle = '#475569';
-            ctx.font = '700 15px Inter, sans-serif';
+            ctx.font = '700 17px Inter, sans-serif';
             ctx.fillText('PW ALIPURDUAR VIDYAPEETH   |   Generated: ' + istTimestamp, SIZE / 2, footerY + 34);
 
             return canvas;
