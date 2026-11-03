@@ -425,7 +425,60 @@
 
         /* ── SELECTION STATES (HIGH VISIBILITY & NO RED) ── */
         
-        /* 1. NOT DONE: Single Tap -> High-Contrast Sunburst Amber Glow & Banner */
+        /* 1. ABSENT (DEFAULT): High-Contrast Royal Violet Accent & Distinct Badge */
+        .stu-card.absent{
+            border:2.5px solid rgba(139,92,246,0.65) !important;
+            background:linear-gradient(180deg, rgba(139,92,246,0.20) 0%, rgba(20,12,38,0.92) 100%) !important;
+            box-shadow:0 0 18px rgba(139,92,246,0.22), inset 0 0 12px rgba(139,92,246,0.12) !important;
+        }
+        .stu-card.absent .stu-box-frame{
+            border:2px solid rgba(139,92,246,0.6) !important;
+        }
+        .stu-card.absent .state-icon{
+            opacity:1;
+            transform:scale(1);
+            background:var(--absent-bright);
+            color:#ffffff;
+            font-weight:900;
+            box-shadow:0 3px 12px rgba(139,92,246,0.6);
+        }
+        .stu-card.absent .stu-status-badge{
+            opacity:1;
+            visibility:visible;
+            background:var(--absent-bright);
+            color:#ffffff;
+            font-weight:900;
+            box-shadow:0 2px 10px rgba(139,92,246,0.5);
+        }
+
+        /* 2. PRESENT / HW DONE: Single Tap -> High-Contrast Emerald Green Glow & Banner */
+        .stu-card.present{
+            border:3.5px solid #10B981 !important;
+            background:linear-gradient(180deg, rgba(16,185,129,0.30) 0%, rgba(6,30,20,0.94) 100%) !important;
+            box-shadow:0 0 26px rgba(16,185,129,0.38), inset 0 0 14px rgba(16,185,129,0.2) !important;
+            transform:translateY(-2px);
+        }
+        .stu-card.present .stu-box-frame{
+            border:2.5px solid #10B981 !important;
+        }
+        .stu-card.present .state-icon{
+            opacity:1;
+            transform:scale(1);
+            background:#10B981;
+            color:#ffffff;
+            font-weight:900;
+            box-shadow:0 3px 12px rgba(16,185,129,0.7);
+        }
+        .stu-card.present .stu-status-badge{
+            opacity:1;
+            visibility:visible;
+            background:#10B981;
+            color:#ffffff;
+            font-weight:900;
+            box-shadow:0 2px 10px rgba(16,185,129,0.6);
+        }
+
+        /* 3. NOT DONE: Double Tap -> High-Contrast Sunburst Amber Glow & Banner */
         .stu-card.not-done{
             border:3.5px solid var(--notdone-bright) !important;
             background:linear-gradient(180deg, rgba(245,158,11,0.28) 0%, rgba(26,18,6,0.92) 100%) !important;
@@ -450,33 +503,6 @@
             color:#000000;
             font-weight:900;
             box-shadow:0 2px 10px rgba(245,158,11,0.6);
-        }
-
-        /* 2. ABSENT: Double Tap -> High-Contrast Royal Violet Glow & Banner */
-        .stu-card.absent{
-            border:3.5px solid var(--absent-bright) !important;
-            background:linear-gradient(180deg, rgba(139,92,246,0.32) 0%, rgba(20,12,38,0.92) 100%) !important;
-            box-shadow:0 0 26px var(--absent-glow), inset 0 0 14px rgba(139,92,246,0.2) !important;
-            transform:translateY(-2px);
-        }
-        .stu-card.absent .stu-box-frame{
-            border:2.5px solid var(--absent-bright) !important;
-        }
-        .stu-card.absent .state-icon{
-            opacity:1;
-            transform:scale(1);
-            background:var(--absent-bright);
-            color:#ffffff;
-            font-weight:900;
-            box-shadow:0 3px 12px rgba(139,92,246,0.7);
-        }
-        .stu-card.absent .stu-status-badge{
-            opacity:1;
-            visibility:visible;
-            background:var(--absent-bright);
-            color:#ffffff;
-            font-weight:900;
-            box-shadow:0 2px 10px rgba(139,92,246,0.6);
         }
 
         /* Floating Corner State Icon */
@@ -977,22 +1003,23 @@
             <!-- Collapsible Tap Guide (Hidden by default, toggled via Tap Guide button) -->
             <div class="hint hint-hw" id="hint-hw" style="display:none">
                 <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px">
-                    <strong>&#128218; Homework Check Mode &mdash; Quick Guide:</strong>
+                    <strong>&#128218; Attendance &amp; Homework Tracker &mdash; Quick Guide:</strong>
                     <button onclick="toggleTapGuide()" style="background:transparent;border:none;color:var(--txt2);font-size:1.05rem;cursor:pointer;padding:2px 8px" title="Close Guide">&#10005;</button>
                 </div>
                 <div class="legend">
-                    <div class="leg-item"><div class="leg-dot" style="background:#10B981"></div>Default &mdash; HW Done &#9989;</div>
-                    <div class="leg-item"><div class="leg-dot" style="background:#F59E0B"></div>Single Tap &mdash; Not Done &#9888;&#65039;</div>
-                    <div class="leg-item"><div class="leg-dot" style="background:#8B5CF6"></div>Double Tap &mdash; Absent &#128683;</div>
-                    <div class="leg-item"><div class="leg-dot" style="background:var(--border-h)"></div>Tap Again &mdash; Reset</div>
-                    <div class="leg-item"><div class="leg-dot" style="background:#38BDF8"></div>Touch &amp; Hold &mdash; Add Remark (Good, +2) &#9999;&#65039;</div>
+                    <div class="leg-item"><div class="leg-dot" style="background:#8B5CF6"></div>Default &mdash; Absent &#128683;</div>
+                    <div class="leg-item"><div class="leg-dot" style="background:#10B981"></div>Single Tap &mdash; Present (HW Done) &#9989;</div>
+                    <div class="leg-item"><div class="leg-dot" style="background:#F59E0B"></div>Double Tap &mdash; HW Not Done &#9888;&#65039;</div>
+                    <div class="leg-item"><div class="leg-dot" style="background:var(--border-h)"></div>Tap Again &mdash; Reset to Absent</div>
+                    <div class="leg-item"><div class="leg-dot" style="background:#38BDF8"></div>Touch &amp; Hold (1s) &mdash; Add Remark (Good, +2) &#9999;&#65039;</div>
                 </div>
             </div>
 
             <!-- Bulk Mark Options (NO RED) -->
             <div class="bulk-row">
+                <button class="sm-btn green-btn" onclick="markAllPresent()" type="button">&#9989; Mark All Present</button>
                 <button class="sm-btn amber-btn" onclick="markAllNotDone()" type="button">&#9888;&#65039; Mark All Not Done</button>
-                <button class="sm-btn green-btn" onclick="clearAll()" type="button">&#8634; Reset All (HW Done)</button>
+                <button class="sm-btn" onclick="resetAllAbsent()" type="button" style="border-color:rgba(139,92,246,0.6);color:#C4B5FD;background:rgba(139,92,246,0.12)">&#128683; Reset All (Absent)</button>
             </div>
 
             <!-- Student Grid -->
@@ -1155,9 +1182,9 @@
         const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSffiF5t58ZTq1Vs6txA1MT2mEDhk9iQdMiJexH43rAby5kzsg/viewform?usp=publish-editor';
 
         /* ── STATE CONSTANTS ───────────────────────────────── */
-        const S_DONE     = 0;   // HW Done (Default)
-        const S_NOT_DONE = 1;   // Single Tap -> Not Done (Sunburst Amber)
-        const S_ABSENT   = 2;   // Double Tap -> Absent (Neon Violet)
+        const S_DONE     = 0;   // Single Tap -> Present / HW Done (Emerald Green)
+        const S_NOT_DONE = 1;   // Double Tap -> Not Done (Sunburst Amber)
+        const S_ABSENT   = 2;   // Default -> Absent (Royal Violet)
 
         /* ── DIVERSE PALETTES FOR RANDOM INITIAL AVATARS ───── */
         const AVATAR_PALETTES = [
@@ -1172,7 +1199,7 @@
         let batchStudents  = [];
         let cardStates     = [];
         let birthdayList   = [];
-        let lastTap        = { idx: -1, time: 0 };
+        let lastTap        = { idx: -1, time: 0, prevState: null };
         const DBL_MS       = 380;
         let isStudentsView = false;
         let guideVisible   = false;
@@ -1223,7 +1250,7 @@
 
             // Prevent accidental tab closure if marks made
             window.addEventListener('beforeunload', (e) => {
-                if (isStudentsView && cardStates.some(s => s !== S_DONE)) {
+                if (isStudentsView && cardStates.some(s => s !== S_ABSENT)) {
                     e.preventDefault();
                     e.returnValue = '';
                 }
@@ -1511,8 +1538,9 @@
             studentRemarks = {};
             if (!batchStudents.length) { toast('No students found in this batch.', 'err'); return; }
 
-            cardStates = new Array(batchStudents.length).fill(S_DONE);
-            lastTap    = { idx: -1, time: 0 };
+            // Default State: ABSENT (All students start as Absent)
+            cardStates = new Array(batchStudents.length).fill(S_ABSENT);
+            lastTap    = { idx: -1, time: 0, prevState: null };
 
             document.getElementById('sec-title').textContent = '\uD83D\uDCDA Homework Check \u2014 ' + batch;
             const ds = fmtDate(document.getElementById('date-inp').value);
@@ -1576,7 +1604,12 @@
                 const isStreakRem = /^\+\d/i.test(currentRem) || /streak/i.test(currentRem);
                 const remClass = 'stu-remark-badge' + (isApprRem ? ' is-appr' : isStreakRem ? ' is-streak' : '');
 
-                return '<div class="stu-card" id="sc-' + i + '" ' +
+                const st = cardStates[i] ?? S_ABSENT;
+                const stClass = st === S_DONE ? 'present' : (st === S_NOT_DONE ? 'not-done' : 'absent');
+                const badgeTxt = st === S_DONE ? '\u2705 Present' : (st === S_NOT_DONE ? '\u26A0\uFE0F Not Done' : '\uD83D\uDEAB Absent');
+                const iconTxt  = st === S_DONE ? '\u2705' : (st === S_NOT_DONE ? '\u26A0\uFE0F' : '\uD83D\uDEAB');
+
+                return '<div class="stu-card ' + stClass + '" id="sc-' + i + '" ' +
                     'onclick="handleTap(' + i + ', event)" ' +
                     'onmousedown="startHold(' + i + ', event)" ' +
                     'onmouseup="endHold(' + i + ', event)" ' +
@@ -1587,12 +1620,12 @@
                     'ontouchmove="checkTouchMove(event)" ' +
                     'role="button" tabindex="0" ' +
                     'onkeydown="if(event.key===\' \'){event.preventDefault();handleTap(' + i + ', event)}">' +
-                    '<div class="state-icon" id="sb-' + i + '"></div>' +
+                    '<div class="state-icon" id="sb-' + i + '">' + iconTxt + '</div>' +
                     photoBoxHtml +
                     '<div class="stu-info">' +
                         '<div class="stu-name" title="' + esc(s.name) + '">' + esc(s.name) + '</div>' +
                         '<div class="stu-reg">' + (s.reg_no ? esc(s.reg_no) : 'Student #' + (i + 1)) + '</div>' +
-                        '<div class="stu-status-badge" id="ss-' + i + '">Done</div>' +
+                        '<div class="stu-status-badge" id="ss-' + i + '">' + badgeTxt + '</div>' +
                         '<div class="' + remClass + '" id="sr-' + i + '" style="' + (currentRem ? '' : 'display:none') + '">' + esc(currentRem) + '</div>' +
                         (isBday ? '<div class="stu-bday-tag">&#127874; Birthday Today!</div>' : '') +
                     '</div>' +
@@ -1730,7 +1763,7 @@
             }
         }
 
-        /* ── TAP HANDLER (Single: Not Done [Amber] | Double: Absent [Violet]) ── */
+        /* ── TAP HANDLER (Single: Present [Emerald] | Double: Not Done [Amber] | Default: Absent [Violet]) ── */
         function handleTap(i, event) {
             if (holdTriggered) {
                 holdTriggered = false;
@@ -1740,15 +1773,22 @@
             const isDouble = (lastTap.idx === i) && (now - lastTap.time) <= DBL_MS;
 
             if (isDouble) {
-                // Double tap toggles ABSENT or resets to DONE
-                cardStates[i] = (cardStates[i] === S_ABSENT) ? S_DONE : S_ABSENT;
-                lastTap = { idx: -1, time: 0 };
+                // If it was already NOT DONE before this double-tap started, toggle back to ABSENT
+                if (lastTap.prevState === S_NOT_DONE) {
+                    cardStates[i] = S_ABSENT;
+                } else {
+                    cardStates[i] = S_NOT_DONE;
+                }
+                lastTap = { idx: -1, time: 0, prevState: null };
             } else {
-                // Single tap cycles DONE -> NOT DONE -> DONE (if absent, reset to done)
-                if      (cardStates[i] === S_DONE)     cardStates[i] = S_NOT_DONE;
-                else if (cardStates[i] === S_NOT_DONE) cardStates[i] = S_DONE;
-                else if (cardStates[i] === S_ABSENT)   cardStates[i] = S_DONE;
-                lastTap = { idx: i, time: now };
+                const prev = cardStates[i];
+                // Single tap toggles PRESENT (HW Done) or resets to ABSENT
+                if (prev === S_DONE) {
+                    cardStates[i] = S_ABSENT;
+                } else {
+                    cardStates[i] = S_DONE;
+                }
+                lastTap = { idx: i, time: now, prevState: prev };
             }
 
             applyState(i);
@@ -1762,34 +1802,41 @@
             const icon  = document.getElementById('sb-' + i);
             if (!card) return;
 
-            card.classList.remove('not-done', 'absent');
+            card.classList.remove('present', 'not-done', 'absent');
             const st = cardStates[i];
 
-            if (st === S_NOT_DONE) {
+            if (st === S_DONE) {
+                card.classList.add('present');
+                badge.textContent = '\u2705 Present';
+                icon.textContent  = '\u2705';
+            } else if (st === S_NOT_DONE) {
                 card.classList.add('not-done');
                 badge.textContent = '\u26A0\uFE0F Not Done';
                 icon.textContent  = '\u26A0\uFE0F';
-            } else if (st === S_ABSENT) {
+            } else {
                 card.classList.add('absent');
                 badge.textContent = '\uD83D\uDEAB Absent';
                 icon.textContent  = '\uD83D\uDEAB';
-            } else {
-                badge.textContent = 'Done';
-                icon.textContent  = '';
             }
         }
 
         function spawnRipple(i) {
             const card = document.getElementById('sc-' + i);
             if (!card) return;
-            const color = cardStates[i] === S_ABSENT ? 'rgba(139,92,246,.4)'
+            const color = cardStates[i] === S_DONE ? 'rgba(16,185,129,.4)'
                         : cardStates[i] === S_NOT_DONE ? 'rgba(245,158,11,.4)'
-                        : 'rgba(16,185,129,.25)';
+                        : 'rgba(139,92,246,.3)';
             const r = document.createElement('div');
             r.className = 'ripple-el';
             r.style.background = color;
             card.appendChild(r);
             setTimeout(() => r.remove(), 600);
+        }
+
+        function markAllPresent() {
+            batchStudents.forEach((_, i) => { cardStates[i] = S_DONE; applyState(i); });
+            updateStats();
+            toast('Marked all as Present');
         }
 
         function markAllNotDone() {
@@ -1798,10 +1845,14 @@
             toast('Marked all as Not Done');
         }
 
-        function clearAll() {
-            batchStudents.forEach((_, i) => { cardStates[i] = S_DONE; applyState(i); });
+        function resetAllAbsent() {
+            batchStudents.forEach((_, i) => { cardStates[i] = S_ABSENT; applyState(i); });
             updateStats();
-            toast('Reset all to HW Done');
+            toast('Reset all to Absent');
+        }
+
+        function clearAll() {
+            resetAllAbsent();
         }
 
         /* ── STATS COUNTER (NO RED) ────────────────────────── */
@@ -1812,7 +1863,7 @@
             const done    = total - absent - notDone;
             document.getElementById('stats-row').innerHTML =
                 '<div class="stat-item"><div class="stat-dot" style="background:#10B981"></div>' +
-                '<span style="color:#10B981;font-weight:800">' + done    + ' HW Done \u2705</span></div>' +
+                '<span style="color:#10B981;font-weight:800">' + done    + ' Present \u2705</span></div>' +
                 '<div class="stat-item"><div class="stat-dot" style="background:#F59E0B"></div>' +
                 '<span style="color:#F59E0B;font-weight:800">'  + notDone + ' Not Done \u26A0\uFE0F</span></div>' +
                 '<div class="stat-item"><div class="stat-dot" style="background:#8B5CF6"></div>' +
@@ -1821,7 +1872,7 @@
 
         /* ── BACK BUTTON WARNING FLOW ──────────────────────── */
         function requestGoBack() {
-            const hasMarks = cardStates.some(s => s !== S_DONE);
+            const hasMarks = cardStates.some(s => s !== S_ABSENT);
             if (hasMarks) {
                 openOverlay('warn-overlay');
             } else {
@@ -1956,7 +2007,7 @@
             let curY = pad;
 
             // ── Header Card ──
-            const headerH = 152;
+            const headerH = 168;
             ctx.save();
             ctx.shadowColor = 'rgba(15, 23, 42, 0.06)';
             ctx.shadowBlur = 18;
@@ -2002,10 +2053,10 @@
                 ctx.textBaseline = 'top';
                 ctx.fillStyle = '#0F172A';
                 ctx.font = '900 37px Poppins, Inter, sans-serif';
-                ctx.fillText('VIDYAPEETH', textX, curY + 38);
+                ctx.fillText('VIDYAPEETH', textX, curY + 44);
                 ctx.font = '700 19px Inter, sans-serif';
                 ctx.fillStyle = '#E11D48';
-                ctx.fillText('IIT-JEE | NEET | FOUNDATION', textX, curY + 80);
+                ctx.fillText('IIT-JEE | NEET | FOUNDATION', textX, curY + 88);
             }
 
             // Centered Main Titles
@@ -2014,22 +2065,31 @@
             ctx.textBaseline = 'top';
 
             ctx.fillStyle = '#0F172A';
-            ctx.font = '900 47px Poppins, Inter, sans-serif';
-            ctx.fillText('PW ALIPURDUAR VIDYAPEETH', centerTitleX, curY + 24);
+            ctx.font = '900 45px Poppins, Inter, sans-serif';
+            ctx.fillText('PW ALIPURDUAR VIDYAPEETH', centerTitleX, curY + 16);
 
             ctx.fillStyle = '#1E3A8A';
-            ctx.font = '900 29px Inter, sans-serif';
-            ctx.fillText('HOMEWORK & ATTENDANCE REPORT', centerTitleX, curY + 82);
+            ctx.font = '900 27px Inter, sans-serif';
+            ctx.fillText('HOMEWORK & ATTENDANCE REPORT', centerTitleX, curY + 70);
 
-            // Top-Right Date Block
+            // Date directly under HOMEWORK & ATTENDANCE REPORT
+            const displayDate = (dateStr || '').toUpperCase();
+            ctx.fillStyle = '#D97706';
+            ctx.font = '900 23px Inter, sans-serif';
+            ctx.fillText('DATE: ' + displayDate, centerTitleX, curY + 114);
+
+            // Top-Right Branding Block
             ctx.textAlign = 'right';
             ctx.textBaseline = 'top';
             ctx.fillStyle = '#0F172A';
-            ctx.font = '900 29px Poppins, Inter, sans-serif';
-            ctx.fillText('DATE: ' + (dateStr || '').toUpperCase(), pad + contentW - 28, curY + 30);
+            ctx.font = '900 24px Poppins, Inter, sans-serif';
+            ctx.fillText('PW ALIPURDUAR', pad + contentW - 28, curY + 36);
             ctx.fillStyle = '#475569';
-            ctx.font = '700 21px Inter, sans-serif';
-            ctx.fillText('Daily Academic Tracker', pad + contentW - 28, curY + 60);
+            ctx.font = '700 19px Inter, sans-serif';
+            ctx.fillText('Daily Academic Tracker', pad + contentW - 28, curY + 68);
+            ctx.fillStyle = '#94A3B8';
+            ctx.font = '700 16px Inter, sans-serif';
+            ctx.fillText('Academic Session 2026', pad + contentW - 28, curY + 98);
 
             curY += headerH + 16;
 
@@ -2097,8 +2157,34 @@
                 const { x, y, w, h } = box;
                 const { title, badge, students, headerBg, borderColor, bodyBg, footerNote, noteColor } = cfg;
                 const headH = 54;
+
+                // Word wrapping & multi-line note calculation
                 const hasNote = Boolean(footerNote);
-                const noteH = hasNote ? 42 : 12;
+                const noteMaxW = w - 48;
+                let noteLines = [];
+                let noteFontSize = 20;
+
+                if (hasNote) {
+                    ctx.font = '800 ' + noteFontSize + 'px Inter, sans-serif';
+                    if (ctx.measureText(footerNote).width <= noteMaxW) {
+                        noteLines = [footerNote];
+                    } else {
+                        const words = footerNote.split(' ');
+                        let currentLine = '';
+                        for (const word of words) {
+                            const testLine = currentLine ? (currentLine + ' ' + word) : word;
+                            if (ctx.measureText(testLine).width <= noteMaxW) {
+                                currentLine = testLine;
+                            } else {
+                                if (currentLine) noteLines.push(currentLine);
+                                currentLine = word;
+                            }
+                        }
+                        if (currentLine) noteLines.push(currentLine);
+                    }
+                }
+
+                const noteH = hasNote ? (noteLines.length > 1 ? 58 : 42) : 12;
 
                 ctx.save();
                 ctx.fillStyle = bodyBg || '#FFFFFF';
@@ -2157,7 +2243,7 @@
                     ctx.fillText(label, px, py);
                 });
 
-                if (hasNote) {
+                if (hasNote && noteLines.length > 0) {
                     ctx.strokeStyle = '#E2E8F0';
                     ctx.lineWidth = 1.5;
                     ctx.beginPath();
@@ -2166,10 +2252,19 @@
                     ctx.stroke();
 
                     ctx.fillStyle = noteColor || '#475569';
-                    ctx.font = '800 21px Inter, sans-serif';
+                    ctx.font = '800 ' + (noteLines.length > 1 ? 18 : 20) + 'px Inter, sans-serif';
                     ctx.textAlign = 'left';
                     ctx.textBaseline = 'middle';
-                    ctx.fillText(footerNote, x + 24, y + h - noteH / 2);
+
+                    if (noteLines.length === 1) {
+                        ctx.fillText(noteLines[0], x + 24, y + h - noteH / 2);
+                    } else {
+                        const lineSpacing = 24;
+                        const startY = y + h - noteH + 18;
+                        noteLines.forEach((line, li) => {
+                            ctx.fillText(line, x + 24, startY + li * lineSpacing);
+                        });
+                    }
                 }
             }
 
