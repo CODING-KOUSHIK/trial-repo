@@ -350,6 +350,79 @@
         }
         @keyframes bounceBday{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
 
+        /* Touch & Hold (Long-press) visual feedback */
+        .stu-card.holding {
+            transform: scale(0.97) !important;
+            box-shadow: 0 0 0 3px #F59E0B, 0 10px 28px rgba(245, 158, 11, 0.45) !important;
+            transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+        }
+
+        /* Student Remark Badge on Card */
+        .stu-remark-badge {
+            margin-top: 6px;
+            padding: 3px 10px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            background: rgba(245, 158, 11, 0.16);
+            color: #FBBF24;
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            max-width: 90%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .stu-remark-badge.is-appr {
+            background: rgba(16, 185, 129, 0.16);
+            color: #34D399;
+            border-color: rgba(16, 185, 129, 0.4);
+        }
+        .stu-remark-badge.is-streak {
+            background: rgba(239, 68, 68, 0.16);
+            color: #F87171;
+            border-color: rgba(239, 68, 68, 0.4);
+        }
+
+        /* Remark Modal Chips */
+        .btn-remark-chip {
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--txt);
+            padding: 7px 12px;
+            border-radius: 8px;
+            font-size: 0.84rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .btn-remark-chip:hover, .btn-remark-chip:active {
+            transform: translateY(-1px);
+        }
+        .btn-remark-chip.chip-appr {
+            border-color: rgba(16, 185, 129, 0.35);
+            color: #10B981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+        .btn-remark-chip.chip-appr:hover {
+            background: rgba(16, 185, 129, 0.22);
+            border-color: #10B981;
+        }
+        .btn-remark-chip.chip-warn {
+            border-color: rgba(245, 158, 11, 0.35);
+            color: #F59E0B;
+            background: rgba(245, 158, 11, 0.1);
+        }
+        .btn-remark-chip.chip-warn:hover {
+            background: rgba(245, 158, 11, 0.22);
+            border-color: #F59E0B;
+        }
+
         /* ── SELECTION STATES (HIGH VISIBILITY & NO RED) ── */
         
         /* 1. NOT DONE: Single Tap -> High-Contrast Sunburst Amber Glow & Banner */
@@ -912,6 +985,7 @@
                     <div class="leg-item"><div class="leg-dot" style="background:#F59E0B"></div>Single Tap &mdash; Not Done &#9888;&#65039;</div>
                     <div class="leg-item"><div class="leg-dot" style="background:#8B5CF6"></div>Double Tap &mdash; Absent &#128683;</div>
                     <div class="leg-item"><div class="leg-dot" style="background:var(--border-h)"></div>Tap Again &mdash; Reset</div>
+                    <div class="leg-item"><div class="leg-dot" style="background:#38BDF8"></div>Touch &amp; Hold &mdash; Add Remark (Good, +2) &#9999;&#65039;</div>
                 </div>
             </div>
 
@@ -968,6 +1042,72 @@
             <div class="warn-actions">
                 <button class="btn-secondary" onclick="closeOverlay('warn-overlay')" type="button">Stay Here</button>
                 <button class="btn-amber" onclick="confirmGoBack()" type="button">Yes, Go Back</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Remark / Appreciation & Streak Modal -->
+    <div class="overlay" id="remark-overlay">
+        <div class="modal remark-modal" style="max-width:440px;width:92%">
+            <div class="mod-head">
+                <div>
+                    <div class="mod-title" style="display:flex;align-items:center;gap:8px">
+                        <span>✏️</span> <span>Student Remark</span>
+                    </div>
+                    <div id="remark-student-name" style="font-size:0.95rem;color:var(--txt2);margin-top:4px;font-weight:700"></div>
+                </div>
+                <button class="mod-close" onclick="closeOverlay('remark-overlay')" type="button">&#10005;</button>
+            </div>
+            <div style="padding:18px 22px 24px">
+                <!-- Appreciation Presets -->
+                <div style="margin-bottom:14px">
+                    <div style="font-size:0.82rem;font-weight:700;color:#10B981;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">
+                        🌟 Appreciation (Regular / Good Work)
+                    </div>
+                    <div style="display:flex;flex-wrap:wrap;gap:8px">
+                        <button type="button" class="btn-remark-chip chip-appr" onclick="setPresetRemark('Excellent')">🌟 Excellent</button>
+                        <button type="button" class="btn-remark-chip chip-appr" onclick="setPresetRemark('Good')">👍 Good</button>
+                        <button type="button" class="btn-remark-chip chip-appr" onclick="setPresetRemark('Very Good')">⭐ Very Good</button>
+                        <button type="button" class="btn-remark-chip chip-appr" onclick="setPresetRemark('Consistent')">🔥 Consistent</button>
+                        <button type="button" class="btn-remark-chip chip-appr" onclick="setPresetRemark('Outstanding')">✨ Outstanding</button>
+                    </div>
+                </div>
+
+                <!-- Pending Streak Presets -->
+                <div style="margin-bottom:16px">
+                    <div style="font-size:0.82rem;font-weight:700;color:#F59E0B;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">
+                        ⚠️ Pending Homework Streak
+                    </div>
+                    <div style="display:flex;flex-wrap:wrap;gap:8px">
+                        <button type="button" class="btn-remark-chip chip-warn" onclick="setPresetRemark('+2')">⚠️ +2 Days</button>
+                        <button type="button" class="btn-remark-chip chip-warn" onclick="setPresetRemark('+3')">⚠️ +3 Days</button>
+                        <button type="button" class="btn-remark-chip chip-warn" onclick="setPresetRemark('+4')">⚠️ +4 Days</button>
+                        <button type="button" class="btn-remark-chip chip-warn" onclick="setPresetRemark('+5')">⚠️ +5 Days</button>
+                        <button type="button" class="btn-remark-chip chip-warn" onclick="setPresetRemark('+6')">⚠️ +6 Days</button>
+                        <button type="button" class="btn-remark-chip chip-warn" onclick="setPresetRemark('+7')">⚠️ +7 Days</button>
+                    </div>
+                </div>
+
+                <!-- Custom Input -->
+                <div style="margin-bottom:18px">
+                    <label for="custom-remark-inp" style="display:block;font-size:0.82rem;font-weight:700;color:var(--txt2);margin-bottom:6px">
+                        Custom Remark / Note:
+                    </label>
+                    <input type="text" id="custom-remark-inp" class="ctrl" placeholder="e.g. Good, +2, Incomplete..." style="font-size:0.95rem;padding:10px 14px">
+                    <div style="font-size:0.75rem;color:var(--txt3);margin-top:5px">
+                        💡 Appears in brackets after student name: e.g. <b>Student Name (Good)</b> or <b>Student Name (+2)</b>
+                    </div>
+                </div>
+
+                <!-- Modal Actions -->
+                <div style="display:flex;gap:10px">
+                    <button class="btn-fill" onclick="saveStudentRemark()" type="button" style="flex:2;padding:12px;font-size:0.95rem">
+                        💾 Save Remark
+                    </button>
+                    <button class="btn-outline" onclick="clearStudentRemark()" type="button" style="flex:1;padding:12px;font-size:0.88rem;color:#EF4444;border-color:rgba(239,68,68,0.4)">
+                        🗑️ Clear
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -1368,6 +1508,7 @@
             if (!subject) { toast('Please select a subject!', 'err'); return; }
 
             batchStudents = allStudents.filter(s => s.batch === batch);
+            studentRemarks = {};
             if (!batchStudents.length) { toast('No students found in this batch.', 'err'); return; }
 
             cardStates = new Array(batchStudents.length).fill(S_DONE);
@@ -1430,8 +1571,20 @@
                         '<div class="stu-char-avatar">' + initial + '</div>' +
                       '</div>';
 
+                const currentRem = studentRemarks[i] || '';
+                const isApprRem = /good|excellent|very good|consistent|outstanding/i.test(currentRem);
+                const isStreakRem = /^\+\d/i.test(currentRem) || /streak/i.test(currentRem);
+                const remClass = 'stu-remark-badge' + (isApprRem ? ' is-appr' : isStreakRem ? ' is-streak' : '');
+
                 return '<div class="stu-card" id="sc-' + i + '" ' +
                     'onclick="handleTap(' + i + ', event)" ' +
+                    'onmousedown="startHold(' + i + ', event)" ' +
+                    'onmouseup="endHold(' + i + ', event)" ' +
+                    'onmouseleave="cancelHold(' + i + ')" ' +
+                    'ontouchstart="startHold(' + i + ', event)" ' +
+                    'ontouchend="endHold(' + i + ', event)" ' +
+                    'ontouchcancel="cancelHold(' + i + ')" ' +
+                    'ontouchmove="checkTouchMove(event)" ' +
                     'role="button" tabindex="0" ' +
                     'onkeydown="if(event.key===\' \'){event.preventDefault();handleTap(' + i + ', event)}">' +
                     '<div class="state-icon" id="sb-' + i + '"></div>' +
@@ -1440,14 +1593,149 @@
                         '<div class="stu-name" title="' + esc(s.name) + '">' + esc(s.name) + '</div>' +
                         '<div class="stu-reg">' + (s.reg_no ? esc(s.reg_no) : 'Student #' + (i + 1)) + '</div>' +
                         '<div class="stu-status-badge" id="ss-' + i + '">Done</div>' +
+                        '<div class="' + remClass + '" id="sr-' + i + '" style="' + (currentRem ? '' : 'display:none') + '">' + esc(currentRem) + '</div>' +
                         (isBday ? '<div class="stu-bday-tag">&#127874; Birthday Today!</div>' : '') +
                     '</div>' +
                     '</div>';
             }).join('');
         }
 
+        /* ── TOUCH & HOLD (UP TO 3S) & REMARK MANAGEMENT ──── */
+        let holdTimer = null;
+        let holdStudentIndex = -1;
+        let holdTriggered = false;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let studentRemarks = {}; // map of studentIndex -> string
+        let activeRemarkStudentIdx = -1;
+
+        function startHold(idx, e) {
+            if (e.button && e.button !== 0) return;
+            holdStudentIndex = idx;
+            holdTriggered = false;
+
+            if (e.touches && e.touches[0]) {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            }
+
+            const card = document.getElementById('sc-' + idx);
+            if (card) card.classList.add('holding');
+
+            clearTimeout(holdTimer);
+            // Touch & hold trigger at 1000ms with card hold indicator up to 3s
+            holdTimer = setTimeout(() => {
+                holdTriggered = true;
+                if (card) card.classList.remove('holding');
+                if (navigator.vibrate) navigator.vibrate(60);
+                openRemarkModal(idx);
+            }, 1000);
+        }
+
+        function endHold(idx, e) {
+            const card = document.getElementById('sc-' + idx);
+            if (card) card.classList.remove('holding');
+            clearTimeout(holdTimer);
+
+            if (holdTriggered) {
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                setTimeout(() => { holdTriggered = false; }, 350);
+                return false;
+            }
+        }
+
+        function cancelHold(idx) {
+            const card = document.getElementById('sc-' + idx);
+            if (card) card.classList.remove('holding');
+            clearTimeout(holdTimer);
+        }
+
+        function checkTouchMove(e) {
+            if (!e.touches || !e.touches[0]) return;
+            const dx = Math.abs(e.touches[0].clientX - touchStartX);
+            const dy = Math.abs(e.touches[0].clientY - touchStartY);
+            if (dx > 12 || dy > 12) {
+                cancelHold(holdStudentIndex);
+            }
+        }
+
+        function openRemarkModal(idx) {
+            activeRemarkStudentIdx = idx;
+            const stu = batchStudents[idx];
+            if (!stu) return;
+
+            document.getElementById('remark-student-name').textContent =
+                stu.name + (stu.reg_no ? ' (' + stu.reg_no + ')' : '');
+
+            const currentRemark = studentRemarks[idx] || '';
+            document.getElementById('custom-remark-inp').value = currentRemark;
+            openOverlay('remark-overlay');
+            setTimeout(() => {
+                const inp = document.getElementById('custom-remark-inp');
+                if (inp) inp.focus();
+            }, 180);
+        }
+
+        function setPresetRemark(val) {
+            const inp = document.getElementById('custom-remark-inp');
+            if (inp) inp.value = val;
+        }
+
+        function saveStudentRemark() {
+            if (activeRemarkStudentIdx < 0) return;
+            const val = document.getElementById('custom-remark-inp').value.trim();
+            const stuName = batchStudents[activeRemarkStudentIdx]?.name || 'Student';
+
+            if (val) {
+                studentRemarks[activeRemarkStudentIdx] = val;
+                toast('Remark saved for ' + stuName + ': (' + val + ')');
+            } else {
+                delete studentRemarks[activeRemarkStudentIdx];
+                toast('Remark cleared for ' + stuName);
+            }
+
+            updateCardRemarkBadge(activeRemarkStudentIdx);
+            closeOverlay('remark-overlay');
+        }
+
+        function clearStudentRemark() {
+            if (activeRemarkStudentIdx < 0) return;
+            const stuName = batchStudents[activeRemarkStudentIdx]?.name || 'Student';
+            delete studentRemarks[activeRemarkStudentIdx];
+            document.getElementById('custom-remark-inp').value = '';
+            updateCardRemarkBadge(activeRemarkStudentIdx);
+            closeOverlay('remark-overlay');
+            toast('Remark cleared for ' + stuName);
+        }
+
+        function updateCardRemarkBadge(idx) {
+            const el = document.getElementById('sr-' + idx);
+            if (!el) return;
+            const rem = studentRemarks[idx];
+            if (rem) {
+                el.textContent = rem;
+                el.style.display = 'inline-flex';
+                el.className = 'stu-remark-badge';
+                if (/good|excellent|very good|consistent|outstanding/i.test(rem)) {
+                    el.classList.add('is-appr');
+                } else if (/^\+\d/i.test(rem) || /streak/i.test(rem)) {
+                    el.classList.add('is-streak');
+                }
+            } else {
+                el.textContent = '';
+                el.style.display = 'none';
+            }
+        }
+
         /* ── TAP HANDLER (Single: Not Done [Amber] | Double: Absent [Violet]) ── */
         function handleTap(i, event) {
+            if (holdTriggered) {
+                holdTriggered = false;
+                return;
+            }
             const now      = Date.now();
             const isDouble = (lastTap.idx === i) && (now - lastTap.time) <= DBL_MS;
 
@@ -1614,22 +1902,34 @@
             return String(v).toUpperCase();
         }
 
-        /* ── SMART FITTING (Truncate Initials if Name Too Long) ── */
-        function fitStudentName(ctx, num, rawName, maxW) {
+        /* ── SMART FITTING (With Student Remarks in Bracket) ── */
+        function fitStudentName(ctx, num, rawName, maxW, rawRemark) {
             const clean = String(rawName || '').trim().toUpperCase().replace(/\s+/g, ' ');
-            let full = num + '. ' + clean;
+            let remarkStr = '';
+            if (rawRemark && String(rawRemark).trim()) {
+                const rem = String(rawRemark).trim().replace(/^\(|\)$/g, '');
+                remarkStr = ' (' + rem + ')';
+            }
+
+            let full = num + '. ' + clean + remarkStr;
             if (ctx.measureText(full).width <= maxW) return full;
 
             const parts = clean.split(' ').filter(Boolean);
             if (parts.length >= 2) {
-                const firstLastInit = num + '. ' + parts[0] + ' ' + parts[parts.length - 1][0] + '.';
+                const firstLastInit = num + '. ' + parts[0] + ' ' + parts[parts.length - 1][0] + '.' + remarkStr;
                 if (ctx.measureText(firstLastInit).width <= maxW) return firstLastInit;
             }
 
-            while (ctx.measureText(full + '…').width > maxW && full.length > 5) {
-                full = full.slice(0, -1);
+            if (parts.length >= 2) {
+                const firstOnly = num + '. ' + parts[0] + remarkStr;
+                if (ctx.measureText(firstOnly).width <= maxW) return firstOnly;
             }
-            return full + '…';
+
+            let base = num + '. ' + clean;
+            while (ctx.measureText(base + '…' + remarkStr).width > maxW && base.length > 5) {
+                base = base.slice(0, -1);
+            }
+            return base + '…' + remarkStr;
         }
 
         /* ── NATIVE 1600x1600 WHATSAPP HD REPORT GENERATOR ─── */
@@ -1692,18 +1992,18 @@
                 ctx.fillStyle = '#FFFFFF';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.font = 'bold 36px Georgia, serif';
+                ctx.font = 'bold 39px Georgia, serif';
                 ctx.fillText('P', logoX - 7, logoY - 12);
-                ctx.font = 'bold 32px Georgia, serif';
+                ctx.font = 'bold 35px Georgia, serif';
                 ctx.fillText('W', logoX + 7, logoY + 14);
 
                 const textX = logoX + logoR + 24;
                 ctx.textAlign = 'left';
                 ctx.textBaseline = 'top';
                 ctx.fillStyle = '#0F172A';
-                ctx.font = '900 34px Poppins, Inter, sans-serif';
+                ctx.font = '900 37px Poppins, Inter, sans-serif';
                 ctx.fillText('VIDYAPEETH', textX, curY + 38);
-                ctx.font = '700 16px Inter, sans-serif';
+                ctx.font = '700 19px Inter, sans-serif';
                 ctx.fillStyle = '#E11D48';
                 ctx.fillText('IIT-JEE | NEET | FOUNDATION', textX, curY + 80);
             }
@@ -1714,21 +2014,21 @@
             ctx.textBaseline = 'top';
 
             ctx.fillStyle = '#0F172A';
-            ctx.font = '900 44px Poppins, Inter, sans-serif';
+            ctx.font = '900 47px Poppins, Inter, sans-serif';
             ctx.fillText('PW ALIPURDUAR VIDYAPEETH', centerTitleX, curY + 24);
 
             ctx.fillStyle = '#1E3A8A';
-            ctx.font = '900 26px Inter, sans-serif';
+            ctx.font = '900 29px Inter, sans-serif';
             ctx.fillText('HOMEWORK & ATTENDANCE REPORT', centerTitleX, curY + 82);
 
             // Top-Right Date Block
             ctx.textAlign = 'right';
             ctx.textBaseline = 'top';
             ctx.fillStyle = '#0F172A';
-            ctx.font = '900 26px Poppins, Inter, sans-serif';
+            ctx.font = '900 29px Poppins, Inter, sans-serif';
             ctx.fillText('DATE: ' + (dateStr || '').toUpperCase(), pad + contentW - 28, curY + 30);
             ctx.fillStyle = '#475569';
-            ctx.font = '700 18px Inter, sans-serif';
+            ctx.font = '700 21px Inter, sans-serif';
             ctx.fillText('Daily Academic Tracker', pad + contentW - 28, curY + 60);
 
             curY += headerH + 16;
@@ -1740,7 +2040,7 @@
             ctx.fill();
 
             ctx.fillStyle = '#FFFFFF';
-            ctx.font = '800 23px Inter, sans-serif';
+            ctx.font = '800 26px Inter, sans-serif';
             ctx.textBaseline = 'middle';
             ctx.textAlign = 'left';
             ctx.fillText('BATCH: ' + (batch || '').toUpperCase(), pad + 28, curY + infoH / 2);
@@ -1775,13 +2075,13 @@
                 ctx.fillStyle = st.text;
                 ctx.textAlign = 'left';
                 ctx.textBaseline = 'top';
-                ctx.font = '900 18px Inter, sans-serif';
+                ctx.font = '900 21px Inter, sans-serif';
                 ctx.fillText(st.title, sx + 22, curY + 14);
 
-                ctx.font = '900 46px Poppins, Inter, sans-serif';
+                ctx.font = '900 49px Poppins, Inter, sans-serif';
                 ctx.fillText(st.count, sx + 22, curY + 36);
 
-                ctx.font = '700 17px Inter, sans-serif';
+                ctx.font = '700 20px Inter, sans-serif';
                 ctx.fillText(st.sub, sx + 22, curY + 86);
             });
 
@@ -1816,7 +2116,7 @@
                 ctx.stroke();
 
                 ctx.fillStyle = '#FFFFFF';
-                ctx.font = '900 23px Inter, sans-serif';
+                ctx.font = '900 26px Inter, sans-serif';
                 ctx.textAlign = 'left';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(badge + '  ' + title + ' (' + students.length + ')', x + 24, y + headH / 2);
@@ -1839,7 +2139,7 @@
                 const rows = Math.max(1, Math.ceil(students.length / cols));
                 const rawRowH = Math.floor(listH / rows);
                 const rowH = Math.min(48, Math.max(24, rawRowH));
-                const fontSize = Math.min(26, Math.max(18, Math.floor(rowH * 0.58) + 2));
+                const fontSize = Math.min(29, Math.max(21, Math.floor(rowH * 0.58) + 5));
                 const colW = Math.floor(listW / cols);
 
                 ctx.font = '800 ' + fontSize + 'px Inter, sans-serif';
@@ -1853,7 +2153,7 @@
                     const px = x + 22 + c * colW;
                     const py = listTop + r * rowH + rowH / 2;
 
-                    const label = fitStudentName(ctx, idx + 1, s.name, colW - 18);
+                    const label = fitStudentName(ctx, idx + 1, s.name, colW - 18, s.remark);
                     ctx.fillText(label, px, py);
                 });
 
@@ -1866,7 +2166,7 @@
                     ctx.stroke();
 
                     ctx.fillStyle = noteColor || '#475569';
-                    ctx.font = '800 18px Inter, sans-serif';
+                    ctx.font = '800 21px Inter, sans-serif';
                     ctx.textAlign = 'left';
                     ctx.textBaseline = 'middle';
                     ctx.fillText(footerNote, x + 24, y + h - noteH / 2);
@@ -1959,11 +2259,11 @@
 
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.font = '900 50px Poppins, Inter, sans-serif';
+                ctx.font = '900 53px Poppins, Inter, sans-serif';
                 ctx.fillStyle = '#047857';
                 ctx.fillText('🎉 100% ATTENDANCE & ALL HOMEWORK SUBMITTED!', SIZE / 2, bodyY + bodyH / 2 - 20);
 
-                ctx.font = '700 26px Inter, sans-serif';
+                ctx.font = '700 29px Inter, sans-serif';
                 ctx.fillStyle = '#065F46';
                 ctx.fillText('Exceptional commitment to academic excellence by all students today.', SIZE / 2, bodyY + bodyH / 2 + 36);
             }
@@ -1972,11 +2272,11 @@
             ctx.textAlign = 'center';
             ctx.textBaseline = 'top';
             ctx.fillStyle = '#1E3A8A';
-            ctx.font = '900 20px Inter, sans-serif';
+            ctx.font = '900 23px Inter, sans-serif';
             ctx.fillText('Regular attendance   •   Timely homework   •   Daily revision', SIZE / 2, footerY + 6);
 
             ctx.fillStyle = '#475569';
-            ctx.font = '700 17px Inter, sans-serif';
+            ctx.font = '700 20px Inter, sans-serif';
             ctx.fillText('PW ALIPURDUAR VIDYAPEETH   |   Generated: ' + istTimestamp, SIZE / 2, footerY + 34);
 
             return canvas;
@@ -1990,9 +2290,17 @@
             const dateStrFmt   = fmtDate(dateVal);
             const dateUpper    = fmtDateUpper(dateVal);
 
-            const absentList   = batchStudents.filter((_, i) => cardStates[i] === S_ABSENT);
-            const notDoneList  = batchStudents.filter((_, i) => cardStates[i] === S_NOT_DONE);
-            const doneList     = batchStudents.filter((_, i) => cardStates[i] === S_DONE);
+            const absentList   = batchStudents
+                .map((s, i) => ({ ...s, origIdx: i, remark: studentRemarks[i] || '' }))
+                .filter(s => cardStates[s.origIdx] === S_ABSENT);
+
+            const notDoneList  = batchStudents
+                .map((s, i) => ({ ...s, origIdx: i, remark: studentRemarks[i] || '' }))
+                .filter(s => cardStates[s.origIdx] === S_NOT_DONE);
+
+            const doneList     = batchStudents
+                .map((s, i) => ({ ...s, origIdx: i, remark: studentRemarks[i] || '' }))
+                .filter(s => cardStates[s.origIdx] === S_DONE);
             const presentCount = batchStudents.length - absentList.length;
 
             const rawTimestamp = new Date().toLocaleString('en-IN', {
@@ -2050,8 +2358,10 @@
         /* ── BUILD TEXT MESSAGE (for text tab) ────────────── */
         function buildTextMessage(dateStr, subject, batch, absentList, notDoneList, doneList, istTimestamp) {
             const DIV = '\u2501'.repeat(26);
-            const numList = (arr) => arr.map((s, n) =>
-                '  ' + (n + 1) + '. *' + s.name + '*' + (s.reg_no ? ' (' + s.reg_no + ')' : '')).join('\n');
+            const numList = (arr) => arr.map((s, n) => {
+                const rem = s.remark ? ' *(' + s.remark.replace(/^\(|\)$/g, '').trim() + ')*' : '';
+                return '  ' + (n + 1) + '. *' + s.name + '*' + rem + (s.reg_no ? ' (' + s.reg_no + ')' : '');
+            }).join('\n');
 
             let msg = '';
             msg += '\uD83C\uDFEB *PW Alipurduar Vidyapeeth*\n';
